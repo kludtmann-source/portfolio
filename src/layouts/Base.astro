@@ -1,0 +1,31 @@
+---
+// Basis-Layout (SPEC §5, §9). Setzt die data-*-Testschnittstelle am <html>
+// und bettet das Archetyp-/Nie-Scroll-Skript inline vor dem Paint ein.
+import viewportScript from '../client/viewport.js?raw';
+import '../styles/tokens.css';
+import '../styles/global.css';
+import type { Lang } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description?: string;
+}
+
+const { lang, title, description = '' } = Astro.props;
+---
+
+<!doctype html>
+<html lang={lang} data-archetype="portrait" data-tier="1" data-webgl="false">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="icon" href="data:," />
+    <script is:inline set:html={viewportScript}></script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

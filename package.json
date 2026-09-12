@@ -1,0 +1,26 @@
+{
+  "name": "knut-ludtmann-de",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "validate": "node scripts/validate-content.mjs",
+    "pretest": "npm run validate",
+    "test": "astro build && playwright test"
+  },
+  "dependencies": {
+    "astro": "^5.13.0",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/js-yaml": "^4.0.9",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "typescript": "^5.6.3"
+  }
+}

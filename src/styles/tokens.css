@@ -1,0 +1,23 @@
+/* Design-Tokens (SPEC §7). Dark/Light via prefers-color-scheme. */
+:root {
+  color-scheme: light dark;
+
+  --bg: #faf9f7;
+  --text: #17181c;
+  --accent: #3b4cc0;
+  --figure-line: #7a8090;
+  --surface-overlay: rgba(255, 255, 255, 0.86);
+
+  /* Degrade-Faktor für die Typo-Skala (SPEC §5), von viewport.js gesetzt. */
+  --typo-step: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1115;
+    --text: #f2f3f5;
+    --accent: #9aa8ff;
+    --figure-line: #99a0b0;
+    --surface-overlay: rgba(15, 17, 21, 0.78);
+  }
+}

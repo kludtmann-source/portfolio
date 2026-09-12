@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://knut-ludtmann.de/schema/profile.schema.json",
+  "title": "Profile",
+  "description": "Schema für content/profile.yaml (SPEC §3).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["person", "skills", "projects", "contact"],
+  "$defs": {
+    "localizedText": {
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "de": { "type": "string" },
+            "en": { "type": "string" }
+          }
+        }
+      ]
+    }
+  },
+  "properties": {
+    "person": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "role", "location", "links"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "role": { "$ref": "#/$defs/localizedText" },
+        "tagline": { "$ref": "#/$defs/localizedText" },
+        "location": { "type": "string" },
+        "links": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["primary", "all"],
+          "properties": {
+            "primary": {
+              "type": "array",
+              "items": { "type": "string" },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "all": {
+              "type": "object",
+              "minProperties": 1,
+              "additionalProperties": { "type": "string", "format": "uri" }
+            }
+          }
+        },
+        "sameAs": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "label"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "$ref": "#/$defs/localizedText" }
+        }
+      }
+    },
+    "projects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "tier"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "oneliner": { "$ref": "#/$defs/localizedText" },
+          "repo": { "type": "string" },
+          "description": { "$ref": "#/$defs/localizedText" },
+          "tier": { "type": "integer", "minimum": 1, "maximum": 2 }
+        }
+      }
+    },
+    "timeline": { "type": "array" },
+    "talks": { "type": "array" },
+    "contact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["email"],
+      "properties": { "email": { "type": "string" } }
+    }
+  }
+}

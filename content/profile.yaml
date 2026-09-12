@@ -1,0 +1,40 @@
+# Single Source of Truth für alle Inhalte (SPEC §3).
+# Lokalisierte Felder: entweder ein String (sprachneutral) oder { de, en }.
+# Leere Felder bleiben leer — Claude Code erfindet keine Inhalte (SPEC §3).
+# Validiert gegen schema/profile.schema.json (SPEC §9).
+
+person:
+  name: "Knut Ludtmann"
+  role: "Experience Architect · UI Design Engineer"
+  tagline: { de: "", en: "" } # TODO Autor, max. 90 Zeichen (T0)
+  location: "Nordkirchen, NRW"
+  links:
+    primary: [github, linkedin] # genau zwei, T0
+    all:
+      github: "https://github.com/kludtmann-source"
+      linkedin: "https://www.linkedin.com/in/knut-ludtmann-7689331a5/"
+  sameAs: [] # wird im Build aus links.all generiert
+
+skills: # T1
+  - { id: design-systems, label: "Design Systems & Token-Architektur" }
+  - { id: a11y, label: "Accessibility-first Engineering" }
+  - { id: ai-ui, label: "Intent-basierte UI / KI-Integration" }
+
+projects: # T1 (Einzeiler) + T2 (Beschreibung)
+  - id: axds
+    title: "AXDS"
+    oneliner: "" # TODO
+    repo: "" # TODO
+    description: "" # TODO, T2
+    tier: 1
+  - id: this-site
+    title: "knut-ludtmann.de"
+    oneliner: "Diese Site — spec-getrieben, viewport-genau, agentenlesbar"
+    repo: "" # TODO
+    tier: 1
+
+timeline: [] # T2, optional
+talks: [] # T2, optional
+
+contact:
+  email: "mail@knut-ludtmann.de" # obfuskiert im HTML, Klartext in llms.txt (P1)

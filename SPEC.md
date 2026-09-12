@@ -1,6 +1,6 @@
-# knut-lutmann.de — Konzept & Übergabe an Claude Code
+# knut-ludtmann.de — Konzept & Übergabe an Claude Code
 
-Version 0.1 · Stand 12.09.2026 · Autor: Knut Lutmann (Konzeptgespräch mit Claude)
+Version 0.1 · Stand 12.09.2026 · Autor: Knut Ludtmann (Konzeptgespräch mit Claude)
 
 Diese Datei ist die **Spec**. Sie ist die einzige Quelle für Entscheidungen. Sie liegt im Repo, wird zur Build-Zeit von der Site selbst gerendert („Wie ist das gebaut?") und wird nie kopiert. Änderungen an der Spec sind Commits mit Begründung; Code folgt der Spec, nicht umgekehrt.
 
@@ -40,13 +40,13 @@ Muster, das überall gilt: **Archetyp → Layout, Content-Stufe, Figur-Hülle.**
 
 Intent ist die Navigation. Die Startsicht zeigt T0 (siehe 3) und eine Intent-Auswahl; jede Wahl ist eine deterministische Sicht auf dieselbe Quelle.
 
-| Intent-ID | Label (Entwurf) | Sicht zeigt |
-|---|---|---|
-| `hire` | „Ich suche jemanden“ | Rolle, Kernkompetenzen, CV-Kurzform, Kontakt, Repos |
-| `collab` | „Ich will etwas zusammen bauen“ | Aktuelle Projekte, Arbeitsweise, Kontakt |
-| `learn` | „Ich will wissen, wie das hier gebaut ist“ | Transparenz-Sicht (siehe 8) |
-| `curious` | „Nur gucken“ | Steckbrief, Persönliches (soweit in `profile` freigegeben) |
-| `agent` | (nicht klickbar; für Maschinen) | `/llms.txt`, `/index.md`, JSON-LD |
+| Intent-ID | Label (Entwurf)                            | Sicht zeigt                                                |
+| --------- | ------------------------------------------ | ---------------------------------------------------------- |
+| `hire`    | „Ich suche jemanden“                       | Rolle, Kernkompetenzen, CV-Kurzform, Kontakt, Repos        |
+| `collab`  | „Ich will etwas zusammen bauen“            | Aktuelle Projekte, Arbeitsweise, Kontakt                   |
+| `learn`   | „Ich will wissen, wie das hier gebaut ist“ | Transparenz-Sicht (siehe 8)                                |
+| `curious` | „Nur gucken“                               | Steckbrief, Persönliches (soweit in `profile` freigegeben) |
+| `agent`   | (nicht klickbar; für Maschinen)            | `/llms.txt`, `/index.md`, JSON-LD                          |
 
 - Die Liste ist Daten (`content/intents.yaml`), nicht Code. Labels und Reihenfolge werden vom Autor gepflegt.
 - Freitext-Feld optional: Eingabe wird **clientseitig und deterministisch** (Stichwort-Regeln in `content/intents.yaml`) auf eine Intent-ID gemappt. Kein LLM-Aufruf in V1 (kein Backend, keine Keys).
@@ -66,39 +66,40 @@ Schema (Entwurf, Claude Code legt das JSON-Schema an und validiert im Build):
 
 ```yaml
 person:
-  name: "Knut Lutmann"
-  role: "Design System Architect · UI Design Engineer"   # TODO Autor: finale Formulierung
-  tagline: ""                                           # TODO Autor, max. 90 Zeichen
+  name: "Knut Ludtmann"
+  role: "Experience Architect · UI Design Engineer"
+  tagline: "" # TODO Autor, max. 90 Zeichen
   location: "Nordkirchen, NRW"
   links:
-    primary: [github, linkedin]                          # genau zwei, T0
+    primary: [github, linkedin] # genau zwei, T0
     all:
-      github: "https://github.com/…"                     # TODO
-      linkedin: "https://www.linkedin.com/in/…"          # TODO
-  sameAs: []   # wird aus links.all generiert
-skills:        # T1
+      github: "https://github.com/kludtmann-source"
+      linkedin: "https://www.linkedin.com/in/knut-ludtmann-7689331a5/"
+  sameAs: [] # wird aus links.all generiert
+skills: # T1
   - { id: design-systems, label: "Design Systems & Token-Architektur" }
   - { id: a11y, label: "Accessibility-first Engineering" }
   - { id: ai-ui, label: "Intent-basierte UI / KI-Integration" }
-projects:      # T1 (Einzeiler) + T2 (Beschreibung)
+projects: # T1 (Einzeiler) + T2 (Beschreibung)
   - id: axds
     title: "AXDS"
-    oneliner: ""      # TODO
-    repo: ""          # TODO
-    description: ""   # TODO, T2
+    oneliner: "" # TODO
+    repo: "" # TODO
+    description: "" # TODO, T2
     tier: 1
   - id: this-site
-    title: "knut-lutmann.de"
+    title: "knut-ludtmann.de"
     oneliner: "Diese Site — spec-getrieben, viewport-genau, agentenlesbar"
-    repo: ""          # TODO
+    repo: "" # TODO
     tier: 1
-timeline: []   # T2, optional
-talks: []      # T2, optional
+timeline: [] # T2, optional
+talks: [] # T2, optional
 contact:
-  email: ""    # TODO; im HTML obfuskiert, in llms.txt im Klartext oder als Link — Entscheidung Autor
+  email: "mail@knut-ludtmann.de" # obfuskiert im HTML, Klartext in llms.txt
 ```
 
 Regeln:
+
 - Kein Inhalt außerhalb von `profile.yaml`. Auch Labels der Intents, Meta-Beschreibungen und der Alt-Text der Figur kommen aus `content/`.
 - Claude Code **erfindet keine Inhalte**. Leere Felder bleiben leer und werden im Build als TODO-Liste ausgegeben (`dist/TODO-content.md`).
 
@@ -106,16 +107,16 @@ Regeln:
 
 ## 4. Ausgaben (aus einer Quelle generiert)
 
-| Ausgabe | Pfad | Zweck |
-|---|---|---|
-| HTML-Site | `/` | Menschen |
-| JSON-LD `Person` | im `<head>` | Suchmaschinen, Entitäts-Konsistenz (`sameAs` auf alle Profile) |
-| `llms.txt` | `/llms.txt` | Kurzfassung für Agenten (T0+T1, Links auf `index.md`) |
-| Markdown-Vollfassung | `/index.md` | Agenten, `<link rel="alternate" type="text/markdown">` im HTML |
-| Profil-JSON | `/profile.json` | Maschinen; identisch mit der Quelle nach Validierung |
-| `robots.txt` | `/robots.txt` | KI-Crawler ausdrücklich erlauben (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, Applebot-Extended, CCBot); `Sitemap:` |
-| `sitemap.xml` | `/sitemap.xml` | Standard |
-| Build-Info | `/build.json` | Commit-SHA, Zeitstempel, Spec-Version, Asset-Provenienz (für 8) |
+| Ausgabe              | Pfad            | Zweck                                                                                                                      |
+| -------------------- | --------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| HTML-Site            | `/`             | Menschen                                                                                                                   |
+| JSON-LD `Person`     | im `<head>`     | Suchmaschinen, Entitäts-Konsistenz (`sameAs` auf alle Profile)                                                             |
+| `llms.txt`           | `/llms.txt`     | Kurzfassung für Agenten (T0+T1, Links auf `index.md`)                                                                      |
+| Markdown-Vollfassung | `/index.md`     | Agenten, `<link rel="alternate" type="text/markdown">` im HTML                                                             |
+| Profil-JSON          | `/profile.json` | Maschinen; identisch mit der Quelle nach Validierung                                                                       |
+| `robots.txt`         | `/robots.txt`   | KI-Crawler ausdrücklich erlauben (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, Applebot-Extended, CCBot); `Sitemap:` |
+| `sitemap.xml`        | `/sitemap.xml`  | Standard                                                                                                                   |
+| Build-Info           | `/build.json`   | Commit-SHA, Zeitstempel, Spec-Version, Asset-Provenienz (für 8)                                                            |
 
 Hinweis für den Build: GitHub Pages kann keine Content Negotiation (kein `Accept`-Header-Routing). Deshalb feste Pfade plus `rel="alternate"`. Eine CDN-Schicht mit Header-Routing ist V2, nicht V1.
 
@@ -125,15 +126,16 @@ Hinweis für den Build: GitHub Pages kann keine Content Negotiation (kein `Accep
 
 Kein Breakpoint-Denken. Der Archetyp wird aus **Aspect Ratio** `r = w/h` und **kurzer Seite** `s = min(w,h)` in CSS-Pixeln bestimmt. Schwellen sind Entwurf und werden mit der Gerätematrix (10) kalibriert.
 
-| Archetyp | Bedingung (Entwurf) | Layout | Stufen | Figur | Typo |
-|---|---|---|---|---|---|
-| `micro` | `s < 260` | Ein Feld, Text als Overlay | T0 (Name, Rolle, 1 Link) | Kopf-/Schulter-Crop, statisch | Name füllt Breite |
-| `tall` | `r < 0.5` und nicht micro | Eine Spalte, gestapelt: Figur oben oder ganzhoch links, Typo, Links, Intent | T0+T1 | Stehende Pose, ganze Höhe | groß, Zeilen kurz |
-| `portrait` | `0.5 ≤ r < 1.2` | Figur als gedämpfter Hintergrund, Typo darüber | T0+T1 | Pose frei, Opazität ≤ 0.35 | stark, Overlay |
-| `split` | `1.2 ≤ r < 2.2` | Drei Spalten: Figur \| Link-Leiste \| Typo | T0+T1 (+T2 wenn `h ≥ 700 && w ≥ 1100`) | Stehende Pose in Spalte 1, Hülle = Spalte | Headline füllt Spalte 3 |
-| `wide` | `r ≥ 2.2` | Wie split, Spalten breiter | T0+T1+T2 | Ausgebreitete Pose (Arme/Beine), Hülle = Spalte | wie split |
+| Archetyp   | Bedingung (Entwurf)       | Layout                                                                      | Stufen                                 | Figur                                           | Typo                    |
+| ---------- | ------------------------- | --------------------------------------------------------------------------- | -------------------------------------- | ----------------------------------------------- | ----------------------- |
+| `micro`    | `s < 260`                 | Ein Feld, Text als Overlay                                                  | T0 (Name, Rolle, 1 Link)               | Kopf-/Schulter-Crop, statisch                   | Name füllt Breite       |
+| `tall`     | `r < 0.5` und nicht micro | Eine Spalte, gestapelt: Figur oben oder ganzhoch links, Typo, Links, Intent | T0+T1                                  | Stehende Pose, ganze Höhe                       | groß, Zeilen kurz       |
+| `portrait` | `0.5 ≤ r < 1.2`           | Figur als gedämpfter Hintergrund, Typo darüber                              | T0+T1                                  | Pose frei, Opazität ≤ 0.35                      | stark, Overlay          |
+| `split`    | `1.2 ≤ r < 2.2`           | Drei Spalten: Figur \| Link-Leiste \| Typo                                  | T0+T1 (+T2 wenn `h ≥ 700 && w ≥ 1400`) | Stehende Pose in Spalte 1, Hülle = Spalte       | Headline füllt Spalte 3 |
+| `wide`     | `r ≥ 2.2`                 | Wie split, Spalten breiter                                                  | T0+T1+T2                               | Ausgebreitete Pose (Arme/Beine), Hülle = Spalte | wie split               |
 
 Regeln:
+
 - **Nie-Scroll-Garantie:** CSS-Layout mit `100dvh`/`100dvw`, Container Queries, `clamp()` über `cqi`/`cqb` (nicht `vw`/`vh` für Typo). Zusätzlich ein Messlauf nach Layout (`ResizeObserver`): Wenn ein Container überläuft, wird die Stufe reduziert (T2 → T1 → T0), dann die Typo-Skala um eine Stufe gesenkt, dann die Figur auf Crop reduziert. Reihenfolge deterministisch, nachvollziehbar in `data-*`-Attributen am `<html>`.
 - **Zoom/Reflow (WCAG 1.4.10, 1.4.4):** Bei 200 % Zoom oder 320 px Breite gilt dieselbe Regel: Stufe degradiert, statt zu überlaufen. Inhalte der höheren Stufen bleiben über die Intent-Navigation erreichbar. Damit ist „kein Scrollen“ keine Barriere.
 - **Orientierungswechsel** wird als neuer Archetyp behandelt; Seed bleibt, Pose wird in die neue Hülle übersetzt (siehe 6).
@@ -144,6 +146,7 @@ Regeln:
 ## 6. Die Figur
 
 ### 6.1 Quelle und Provenienz
+
 - Basis ist ein **Ganzkörperscan des Autors** (Handy-App, z. B. Polycam/Luma/Kiri), bereinigt und in Blender auf ca. 1.000–2.000 Dreiecke dezimiert. Kein Gesicht, keine Textur — nur Mesh.
 - Rig: Auto-Rig Pro (Blender). Posen/Clips: Quaternius Universal Animation Library (CC0) oder Mixamo-Clips retargetet.
 - **Ins Repo gehört:** das dezimierte, geriggte Modell (glTF/GLB, eigenes Werk), die gebackenen Standbilder (SVG/PNG), die Pose-Hüllen-Definitionen. **Nicht ins Repo:** Roh-Scan, Mixamo-Rohdateien (FBX), Blender-Arbeitsdateien mit Fremdassets.
@@ -151,11 +154,13 @@ Regeln:
 - Bis der Scan existiert: Platzhalter ist ein Mixamo-Y-Bot (dezimiert), klar als `placeholder` markiert; Rohdatei nicht committen.
 
 ### 6.2 Rendering
+
 - WebGL (three.js): `LineSegments` über `EdgesGeometry` oder `MeshBasicMaterial({ wireframe: true })`; Farbe aus dem Token-Set; keine Beleuchtung nötig.
 - Kein WebGL / `prefers-reduced-motion` / Micro-Archetyp: **statischer Fallback** aus dem gebackenen Set (siehe 6.4).
 - Die Figur ist dekorativ: `aria-hidden="true"`, ein einziges, aus `content/` gepflegtes Alt-/Beschreibungs-Element für die Transparenz-Sicht.
 
 ### 6.3 Pose: Zufall in Hüllen, Seed statt Zufall
+
 - Pro Ladung wird ein Seed erzeugt (32-bit), in der URL sichtbar (`?pose=4711`); ist `?pose` gesetzt, wird er verwendet.
 - Pro Archetyp definiert `content/pose-envelopes.yaml`: Bounding Box (in Spalten-/Containeranteilen), Ankerpunkt (Füße unten / zentriert), erlaubte Clips, erlaubte Zeitfenster im Clip, Tabuzonen (z. B. „Arm darf Spalte 3 nicht überlappen“).
 - Der Seed wählt: Clip → Zeitpunkt im Clip → optional zweiter Clip und Mischverhältnis → Rauschen auf Sekundärgelenke (Kopfneigung ≤ 8°, Handdrehung, Gewichtsverlagerung).
@@ -163,6 +168,7 @@ Regeln:
 - Bei Archetypwechsel wird derselbe Seed in die neue Hülle übersetzt (gleicher Clip, ggf. anderer Zeitpunkt).
 
 ### 6.4 Fallback und Ladeverhalten
+
 - Build backt aus den erlaubten Clips 30–40 Standbilder pro Archetyp-Crop als SVG (Blender Freestyle/Wireframe → SVG) plus PNG-Fallback.
 - Fallback wählt per Seed aus dem Set — Uniqueness degradiert von „stufenlos“ auf „viele“, nicht auf „eins“.
 - **LCP:** Das Fallback-Bild wird sofort gerendert (inline SVG oder `<img fetchpriority="high">`). WebGL lädt nach und tauscht hart; ein Übergang nur ohne `prefers-reduced-motion`.
@@ -182,6 +188,7 @@ Regeln:
 ## 8. Transparenz-Sicht „Wie ist das gebaut?“ (`?i=learn`)
 
 Zeigt, aus dem Repo gerendert, nie kopiert:
+
 1. Diese Spec (Markdown, aktueller Stand des Builds), mit Link auf die Datei im Repo.
 2. Build-Info: Commit-SHA (verlinkt), Zeitstempel, Spec-Version.
 3. Aktueller Zustand: Archetyp, Stufe, Seed, Clip/Zeitpunkt der Figur, WebGL ja/nein — live aus `data-*`.
@@ -204,20 +211,21 @@ Zeigt, aus dem Repo gerendert, nie kopiert:
 
 **Gerätematrix** (CSS-px; Werte sind Kalibrierziele, Watch-Viewport ist zu verifizieren):
 
-| Name | w × h | erwarteter Archetyp |
-|---|---|---|
-| watch | 184 × 224 | micro |
-| phone-portrait | 390 × 844 | tall |
-| phone-landscape | 844 × 390 | split |
-| tablet-portrait | 820 × 1180 | portrait |
-| tablet-landscape | 1180 × 820 | split |
-| laptop | 1440 × 900 | split (+T2) |
-| desktop | 1920 × 1080 | split (+T2) |
-| ultrawide | 3440 × 1440 | wide |
-| car-tall | 800 × 4000 | tall |
-| square | 1000 × 1000 | portrait |
+| Name             | w × h       | erwarteter Archetyp |
+| ---------------- | ----------- | ------------------- |
+| watch            | 184 × 224   | micro               |
+| phone-portrait   | 390 × 844   | tall                |
+| phone-landscape  | 844 × 390   | split               |
+| tablet-portrait  | 820 × 1180  | portrait            |
+| tablet-landscape | 1180 × 820  | split               |
+| laptop           | 1440 × 900  | split (+T2)         |
+| desktop          | 1920 × 1080 | split (+T2)         |
+| ultrawide        | 3440 × 1440 | wide                |
+| car-tall         | 800 × 4000  | tall                |
+| square           | 1000 × 1000 | portrait            |
 
 **Tests (Playwright, im CI):**
+
 - Für jede Matrixzeile und jeden Intent: kein Overflow (`scrollHeight ≤ clientHeight`, `scrollWidth ≤ clientWidth` auf `<html>`), erwarteter Archetyp, erwartete Stufe.
 - Visual Regression mit festem Seed (`?pose=1`) pro Matrixzeile.
 - Zoom 200 % auf phone-portrait und laptop: kein Overflow, Stufe degradiert.
@@ -278,11 +286,15 @@ Das Repo ist öffentlich. Es enthält nichts aus dem Arbeitgeberkontext des Auto
 
 ## 14. Offene Entscheidungen des Autors (vor P0)
 
-- [ ] GitHub-User/Repo-Name; Repo öffentlich ab P0 oder ab P2?
-- [ ] Finale Rollenbezeichnung und Tagline (T0).
-- [ ] Welche zwei Primär-Links (T0)?
-- [ ] E-Mail: Klartext, obfuskiert oder nur Formular-Link?
-- [ ] Intent-Labels und ob `curious` persönliche Projekte zeigt (Skate-Themen etc.) — welche?
-- [ ] Sprache der Site: Deutsch, Englisch oder beides? (Spec ist Deutsch; `index.md`/`llms.txt` ggf. Englisch für Agenten.)
-- [ ] Scan: wann, mit welcher App; bis dahin Y-Bot-Platzhalter.
-- [ ] Watch-Viewport real vermessen (Apple Watch Safari), Schwelle `micro` danach setzen.
+- [x] GitHub-User: `kludtmann-source`; Repo: User-Site `kludtmann-source.github.io`; öffentlich ab P0.
+- [x] Rolle: „Experience Architect · UI Design Engineer"; Tagline: offen (TODO ≤ 90 Z.).
+- [x] Primär-Links: `github.com/kludtmann-source` + LinkedIn (siehe §3).
+- [x] E-Mail: `mail@knut-ludtmann.de`; obfuskiert im HTML, Klartext in `llms.txt`.
+- [ ] Intent-Labels und ob `curious` persönliche Projekte zeigt (Skate-Themen etc.) — welche? → P2
+- [x] Sprache: bilingual DE + EN; `index.md`/`llms.txt` Englisch; Default DE. Sprachumschalt-Mechanismus → P2.
+- [ ] Scan: wann, mit welcher App; bis dahin Y-Bot-Platzhalter. → P3
+- [ ] Watch-Viewport real vermessen (Apple Watch Safari), Schwelle `micro` danach setzen. → P4
+- [x] split→+T2-Schwelle: `w ≥ 1400` statt `w ≥ 1100` (Abweichung, siehe ADR-001).
+- [x] Lizenz: All rights reserved (proprietär).
+- [x] Recht: eigene Routen `/impressum` + `/datenschutz` → P2.
+- [x] Domain `knut-ludtmann.de` aktiv erst P4; bis dahin `kludtmann-source.github.io`.

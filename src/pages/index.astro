@@ -1,0 +1,105 @@
+---
+// Startsicht (SPEC §3, §5). Rendert T0 immer, T1/T2 nach Stufe (per CSS/data-tier).
+// Intent-Auswahl und Sichten kommen in P2.
+import Base from '../layouts/Base.astro';
+import Figure from '../components/Figure.astro';
+import { profile } from '../lib/content';
+import { resolveLang, t } from '../lib/i18n';
+
+const lang = resolveLang(Astro.url.searchParams.get('lang'));
+const otherLang = lang === 'de' ? 'en' : 'de';
+
+const p = profile.person;
+const name = p.name;
+const role = t(p.role, lang);
+const tagline = t(p.tagline, lang);
+const location = p.location;
+
+const primaryLinks = p.links.primary
+  .map((key) => ({ key, url: p.links.all[key] }))
+  .filter((l) => Boolean(l.url));
+
+// SPEC §7/§14: E-Mail obfuskiert im HTML; per Insel zu mailto aufgewertet.
+const [emailUser, emailDomain] = profile.contact.email.split('@');
+
+const title = `${name} — ${role}`;
+const labels = {
+  de: { primary: 'Primärlinks', skills: 'Kompetenzen', projects: 'Projekte', email: 'E-Mail' },
+  en: { primary: 'Primary links', skills: 'Skills', projects: 'Projects', email: 'Email' },
+}[lang];
+---
+
+<Base lang={lang} title={title} description={role}>
+  <div class="stage">
+    <figure class="figure" aria-hidden="true"><Figure /></figure>
+
+    <nav class="links" aria-label={labels.primary}>
+      {
+        primaryLinks.map((l, i) => (
+          <a class:list={['link', { 'link-secondary': i > 0 }]} href={l.url} rel="me">
+            {l.key}
+          </a>
+        ))
+      }
+    </nav>
+
+    <main class="content">
+      <h1 class="name">{name}</h1>
+      <p class="role">{role}</p>
+      {tagline && <p class="tagline essence-extra">{tagline}</p>}
+      <p class="location essence-extra">{location}</p>
+
+      <ul class="skills t1" aria-label={labels.skills}>
+        {profile.skills.map((s) => <li>{t(s.label, lang)}</li>)}
+      </ul>
+
+      <ul class="projects t1" aria-label={labels.projects}>
+        {
+          profile.projects.map((pr) => {
+            const one = t(pr.oneliner, lang);
+            return (
+              <li>
+                <span class="project-title">{pr.title}</span>
+                {one && <span class="project-one">{one}</span>}
+              </li>
+            );
+          })
+        }
+      </ul>
+
+      <p class="contact t1">
+        <a class="email" href="#" data-u={emailUser} data-d={emailDomain} aria-label={labels.email}>
+          <span class="email-text">{emailUser}<span aria-hidden="true"> [at] </span>{emailDomain}</span>
+        </a>
+      </p>
+
+      <div class="depth t2">
+        {
+          profile.projects
+            .filter((pr) => t(pr.description, lang))
+            .map((pr) => (
+              <p>
+                <strong>{pr.title}:</strong> {t(pr.description, lang)}
+              </p>
+            ))
+        }
+      </div>
+    </main>
+
+    <a class="lang-toggle" href={`?lang=${otherLang}`} hreflang={otherLang} rel="alternate">
+      {otherLang.toUpperCase()}
+    </a>
+  </div>
+
+  <script is:inline>
+    // E-Mail-Aufwertung: obfuskierte Teile → echtes mailto (Progressive Enhancement).
+    (function () {
+      var a = document.querySelector('a.email[data-u][data-d]');
+      if (!a) return;
+      var addr = a.getAttribute('data-u') + '@' + a.getAttribute('data-d');
+      a.setAttribute('href', 'mailto:' + addr);
+      var text = a.querySelector('.email-text');
+      if (text) text.textContent = addr;
+    })();
+  </script>
+</Base>
