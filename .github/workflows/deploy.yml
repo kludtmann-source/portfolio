@@ -32,6 +32,7 @@ jobs:
         run: npm run build
       - name: Playwright installieren
         run: npx playwright install --with-deps chromium
+      # SPEC §10: Viewport-Matrix + Agenten-Ausgaben (P1) validieren.
       - name: Tests (SPEC §10)
         run: npx playwright test
       - uses: actions/upload-pages-artifact@v3

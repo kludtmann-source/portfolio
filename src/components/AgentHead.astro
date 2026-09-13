@@ -1,0 +1,25 @@
+---
+// Agenten-/SEO-Kopf (SPEC §4): JSON-LD Person, Markdown-Alternate, canonical, hreflang.
+import { profile } from '../lib/content';
+import { toJsonLd, outputUrls } from '../lib/outputs';
+import type { Lang } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const base = new URL(import.meta.env.BASE_URL, Astro.site ?? Astro.url.origin);
+const urls = outputUrls(base);
+const canonical = lang === 'en' ? `${urls.home}?lang=en` : urls.home;
+const jsonLd = toJsonLd(profile, lang, canonical);
+// `<` entschärfen, damit kein </script>-Ausbruch möglich ist.
+const jsonLdText = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
+---
+
+<script type="application/ld+json" is:inline set:html={jsonLdText}></script>
+<link rel="canonical" href={canonical} />
+<link rel="alternate" type="text/markdown" href={urls.indexMd} />
+<link rel="alternate" hreflang="de" href={urls.home} />
+<link rel="alternate" hreflang="en" href={`${urls.home}?lang=en`} />
+<link rel="alternate" hreflang="x-default" href={urls.home} />

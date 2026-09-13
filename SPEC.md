@@ -250,8 +250,8 @@ Zeigt, aus dem Repo gerendert, nie kopiert:
 │  ├─ figure/figure.glb       ← eigenes Werk (dezimierter Scan)
 │  ├─ figure/poses/*.svg|png  ← gebacken
 │  └─ PROVENANCE.md
-├─ src/                       ← Astro
-├─ scripts/                   ← Generatoren (llms.txt, index.md, profile.json, build.json)
+├─ src/                       ← Astro (Agenten-Ausgaben als Endpoints in src/pages/, ADR-003)
+├─ scripts/                   ← Nicht-Astro-Tooling (Content-Validierung)
 ├─ tests/                     ← Playwright, axe, Validierung
 ├─ docs/
 │  ├─ DNS-IONOS.md
