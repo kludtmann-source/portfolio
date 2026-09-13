@@ -22,8 +22,8 @@ for (const cell of MATRIX) {
     page,
   }) => {
     await page.setViewportSize({ width: cell.w, height: cell.h });
-    // Fester Seed für Reproduzierbarkeit (SPEC §10).
-    await page.goto('/?pose=1');
+    // Fester Seed für Reproduzierbarkeit (SPEC §10). Relativ zur baseURL (base: '/portfolio/').
+    await page.goto('./?pose=1');
     await page.waitForSelector('html[data-settled="true"]');
 
     const state = await page.evaluate(() => {

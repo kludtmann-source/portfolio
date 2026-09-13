@@ -286,7 +286,7 @@ Das Repo ist öffentlich. Es enthält nichts aus dem Arbeitgeberkontext des Auto
 
 ## 14. Offene Entscheidungen des Autors (vor P0)
 
-- [x] GitHub-User: `kludtmann-source`; Repo: User-Site `kludtmann-source.github.io`; öffentlich ab P0.
+- [x] GitHub-User: `kludtmann-source`; Repo: Projekt-Site `portfolio` (Deploy unter `kludtmann-source.github.io/portfolio/`, `base: '/portfolio/'`, siehe ADR-002); öffentlich ab P0.
 - [x] Rolle: „Experience Architect · UI Design Engineer"; Tagline: offen (TODO ≤ 90 Z.).
 - [x] Primär-Links: `github.com/kludtmann-source` + LinkedIn (siehe §3).
 - [x] E-Mail: `mail@knut-ludtmann.de`; obfuskiert im HTML, Klartext in `llms.txt`.
@@ -297,4 +297,4 @@ Das Repo ist öffentlich. Es enthält nichts aus dem Arbeitgeberkontext des Auto
 - [x] split→+T2-Schwelle: `w ≥ 1400` statt `w ≥ 1100` (Abweichung, siehe ADR-001).
 - [x] Lizenz: All rights reserved (proprietär).
 - [x] Recht: eigene Routen `/impressum` + `/datenschutz` → P2.
-- [x] Domain `knut-ludtmann.de` aktiv erst P4; bis dahin `kludtmann-source.github.io`.
+- [x] Domain `knut-ludtmann.de` aktiv erst P4; bis dahin `kludtmann-source.github.io/portfolio/`. In P4 entfällt der `base`-Pfad (Custom Domain zeigt auf Root, siehe ADR-002).
