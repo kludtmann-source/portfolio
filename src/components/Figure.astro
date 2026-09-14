@@ -1,16 +1,48 @@
 ---
-// SPEC §6 / §13.2 (P0): einfarbige Platzhalterform. Dekorativ, aria-hidden am Wrapper.
-// Wird in P3 durch das gebackene Set und die WebGL-Insel ersetzt.
+// Figur (SPEC §6). Sofort sichtbarer Platzhalter/Fallback (LCP), dann per Seed
+// das gebackene Standbild und – bei Eignung – die WebGL-Figur (src/client/figure).
+// Dekorativ: der Wrapper ist aria-hidden (durch die Aufrufer).
+import fs from 'node:fs';
+import path from 'node:path';
+import { poseEnvelopes } from '../lib/content';
+
+const base = import.meta.env.BASE_URL;
+
+// Manifest wird prebuild erzeugt (scripts/bake-poses). Fehlt es (Dev ohne
+// prebuild), bleibt die Platzhalterform — die Site funktioniert ohne Assets.
+let manifest: Record<string, number> = {};
+try {
+  manifest = JSON.parse(
+    fs.readFileSync(path.resolve(process.cwd(), 'public/figure/poses/manifest.json'), 'utf8'),
+  );
+} catch {
+  manifest = {};
+}
+
+const figureData = JSON.stringify({
+  base,
+  glb: `${base}figure/figure.glb`,
+  envelopes: poseEnvelopes.envelopes,
+  noise: poseEnvelopes.noise,
+  manifest,
+});
 ---
 
-<svg
-  class="figure-shape"
-  viewBox="0 0 100 220"
-  role="presentation"
-  focusable="false"
-  data-placeholder="true"
-  xmlns="http://www.w3.org/2000/svg"
->
-  <circle cx="50" cy="34" r="26"></circle>
-  <rect x="22" y="66" width="56" height="140" rx="18"></rect>
-</svg>
+<div class="figure-shape-host" data-figure-host>
+  <svg
+    class="figure-shape"
+    viewBox="0 0 100 220"
+    role="presentation"
+    focusable="false"
+    data-placeholder="true"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="50" cy="34" r="26"></circle>
+    <rect x="22" y="66" width="56" height="140" rx="18"></rect>
+  </svg>
+</div>
+<script type="application/json" data-figure-data set:html={figureData}></script>
+<script>
+  import { initFigure } from '../client/figure';
+  initFigure();
+</script>

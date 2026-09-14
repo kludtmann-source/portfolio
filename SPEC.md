@@ -151,7 +151,11 @@ Regeln:
 - Rig: Auto-Rig Pro (Blender). Posen/Clips: Quaternius Universal Animation Library (CC0) oder Mixamo-Clips retargetet.
 - **Ins Repo gehört:** das dezimierte, geriggte Modell (glTF/GLB, eigenes Werk), die gebackenen Standbilder (SVG/PNG), die Pose-Hüllen-Definitionen. **Nicht ins Repo:** Roh-Scan, Mixamo-Rohdateien (FBX), Blender-Arbeitsdateien mit Fremdassets.
 - `assets/PROVENANCE.md` dokumentiert jede Quelle mit Lizenz; `/build.json` referenziert sie.
-- Bis der Scan existiert: Platzhalter ist ein Mixamo-Y-Bot (dezimiert), klar als `placeholder` markiert; Rohdatei nicht committen.
+- Bis der Scan existiert: Platzhalter, klar als `placeholder` markiert. P3 nutzt
+  einen **prozeduralen** Low-Poly-Platzhalter (eigenes Werk, node-basiert animiert),
+  erzeugt im `prebuild` und ausgeliefert aus `public/figure/` — statt Mixamo-Y-Bot
+  mit Blender; Austausch gegen den Scan ohne Codeänderung (ADR-005). Rohdaten nicht
+  committen.
 
 ### 6.2 Rendering
 
@@ -169,7 +173,7 @@ Regeln:
 
 ### 6.4 Fallback und Ladeverhalten
 
-- Build backt aus den erlaubten Clips 30–40 Standbilder pro Archetyp-Crop als SVG (Blender Freestyle/Wireframe → SVG) plus PNG-Fallback.
+- Build backt aus den erlaubten Clips 30–40 Standbilder pro Archetyp-Crop als SVG. Für den Platzhalter geschieht das **prozedural in Node** (Projektion der Mesh-Kanten, ADR-005); für den echten Scan bleibt Blender Freestyle/Wireframe → SVG (plus optional PNG-Fallback) möglich.
 - Fallback wählt per Seed aus dem Set — Uniqueness degradiert von „stufenlos“ auf „viele“, nicht auf „eins“.
 - **LCP:** Das Fallback-Bild wird sofort gerendert (inline SVG oder `<img fetchpriority="high">`). WebGL lädt nach und tauscht hart; ein Übergang nur ohne `prefers-reduced-motion`.
 - Budget: three.js-Bundle + Modell ≤ 250 KB gzip; Fallback-SVG ≤ 30 KB.
@@ -247,8 +251,8 @@ Zeigt:
 │  └─ pose-envelopes.yaml
 ├─ schema/                    ← JSON-Schemas für content/
 ├─ assets/
-│  ├─ figure/figure.glb       ← eigenes Werk (dezimierter Scan)
-│  ├─ figure/poses/*.svg|png  ← gebacken
+│  ├─ figure/figure.glb       ← eigenes Werk (dezimierter Scan); Platzhalter: public/figure/ (ADR-005)
+│  ├─ figure/poses/*.svg|png  ← gebacken; Platzhalter prebuild in public/figure/poses/ (ADR-005)
 │  └─ PROVENANCE.md
 ├─ src/                       ← Astro (Agenten-Ausgaben als Endpoints in src/pages/, ADR-003)
 ├─ scripts/                   ← Nicht-Astro-Tooling (Content-Validierung)
@@ -275,7 +279,7 @@ Das Repo ist öffentlich. Es enthält nichts aus dem Arbeitgeberkontext des Auto
    - **P0 Walking Skeleton:** Repo, Astro, `profile.yaml` mit Schema, T0-Rendering, Archetyp-Erkennung mit `data-*`, Nie-Scroll-Messlauf, Playwright-Matrix ohne Overflow. Figur = einfarbige Platzhalterform. Deploy auf `<user>.github.io`.
    - **P1 Agenten-Ausgaben:** JSON-LD, `llms.txt`, `index.md`, `profile.json`, `robots.txt`, `sitemap.xml`, `build.json`, Validierung im CI.
    - **P2 Intent-Sichten:** `intents.yaml`, separate Routen je Intent (ADR-004), Sichten für T1/T2, Freitext-Mapping, Transparenz-Sicht (8), Recht-Routen.
-   - **P3 Figur:** Fallback-Pipeline mit gebackenem Set und Seed, dann WebGL-Insel, Hüllen, Übersetzung bei Archetypwechsel. Zuerst mit Y-Bot-Platzhalter, Austausch gegen Scan ohne Codeänderung.
+   - **P3 Figur:** Fallback-Pipeline mit gebackenem Set und Seed, dann WebGL-Insel, Hüllen, Übersetzung bei Archetypwechsel. Zuerst mit prozeduralem Platzhalter (ADR-005), Austausch gegen Scan ohne Codeänderung.
    - **P4 Feinschliff:** Typo-Kalibrierung, Tokens, Dark/Light, Lighthouse, DNS-Doku.
 3. **Commits referenzieren Spec-Abschnitte** (`feat(figure): seed-based pose selection — SPEC §6.3`). Abweichungen von der Spec sind ein ADR in `docs/decisions/` plus Spec-Änderung im selben Commit.
 4. **Keine Abhängigkeiten ohne Grund.** Jede neue Dependency wird im Commit begründet. Budget in 6.4 und 10 ist bindend.
@@ -292,7 +296,7 @@ Das Repo ist öffentlich. Es enthält nichts aus dem Arbeitgeberkontext des Auto
 - [x] E-Mail: `mail@knut-ludtmann.de`; obfuskiert im HTML, Klartext in `llms.txt`.
 - [ ] Intent-Labels und ob `curious` persönliche Projekte zeigt (Skate-Themen etc.) — welche? → P2
 - [x] Sprache: bilingual DE + EN; `index.md`/`llms.txt` Englisch; Default DE. Sprachumschalt-Mechanismus → P2.
-- [ ] Scan: wann, mit welcher App; bis dahin Y-Bot-Platzhalter. → P3
+- [ ] Scan: wann, mit welcher App; bis dahin prozeduraler Platzhalter (ADR-005, Pipeline in P3 umgesetzt). → P3
 - [ ] Watch-Viewport real vermessen (Apple Watch Safari), Schwelle `micro` danach setzen. → P4
 - [x] split→+T2-Schwelle: `w ≥ 1400` statt `w ≥ 1100` (Abweichung, siehe ADR-001).
 - [x] Lizenz: All rights reserved (proprietär).

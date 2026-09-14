@@ -1,0 +1,46 @@
+# Pose-Hüllen pro Archetyp (SPEC §6.3). Platzhalter-Werte — verfeinerbar an den
+# echten Clips, sobald der Scan existiert (SPEC §6.1, §14; ADR-005).
+#
+# box/taboos in Container-Anteilen (0..1, Ursprung oben links).
+# timeWindow in Clip-Anteilen (0..1). anchor: feet-center | center | head.
+# clips referenzieren die Animationen im Figur-GLB (Platzhalter: idle/stand/spread).
+
+clips: [idle, stand, spread]
+
+noise:
+  headTiltDeg: 8 # SPEC §6.3: Kopfneigung ≤ 8°
+  handTwistDeg: 20
+  weightShift: 0.15
+
+envelopes:
+  micro:
+    box: { x: 0.2, y: 0.0, w: 0.6, h: 0.6 }
+    anchor: head
+    clips: [idle]
+    timeWindow: [0.0, 0.0]
+    taboos: []
+  tall:
+    box: { x: 0.1, y: 0.0, w: 0.8, h: 1.0 }
+    anchor: feet-center
+    clips: [idle, stand]
+    timeWindow: [0.0, 1.0]
+    taboos: []
+  portrait:
+    box: { x: 0.05, y: 0.0, w: 0.9, h: 1.0 }
+    anchor: center
+    clips: [idle, stand, spread]
+    timeWindow: [0.0, 1.0]
+    taboos: []
+  split:
+    box: { x: 0.0, y: 0.0, w: 1.0, h: 1.0 }
+    anchor: feet-center
+    clips: [idle, stand]
+    timeWindow: [0.1, 0.9]
+    # SPEC §6.3-Beispiel: Arm darf die Nachbarspalte (Link-Leiste) nicht überlappen.
+    taboos: [{ x: 0.82, y: 0.0, w: 0.18, h: 1.0 }]
+  wide:
+    box: { x: 0.0, y: 0.0, w: 1.0, h: 1.0 }
+    anchor: feet-center
+    clips: [spread, stand]
+    timeWindow: [0.0, 1.0]
+    taboos: []

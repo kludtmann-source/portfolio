@@ -44,5 +44,11 @@ validate(
   'content/intents.yaml',
 );
 
+validate(
+  path.join(root, 'schema', 'pose-envelopes.schema.json'),
+  path.join(root, 'content', 'pose-envelopes.yaml'),
+  'content/pose-envelopes.yaml',
+);
+
 if (!allOk) process.exit(1);
 

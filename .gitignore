@@ -5,6 +5,9 @@ node_modules/
 dist/
 .astro/
 
+# Generierte Figur-Assets (prebuild, SPEC §6 / ADR-005)
+public/figure/
+
 # Playwright
 test-results/
 playwright-report/

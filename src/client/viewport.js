@@ -41,8 +41,7 @@
     root.dataset.tier = String(c.tier);
     root.dataset.nominalTier = String(c.tier);
     root.dataset.seed = String(currentSeed);
-    // P0: keine WebGL-Figur aktiv.
-    root.dataset.webgl = 'false';
+    // data-webgl/clip/pose-time verwaltet die Figur-Insel (SPEC §6, src/client/figure).
     // Degrade-Zustand zurücksetzen.
     root.dataset.typoStep = '0';
     delete root.dataset.figureCrop;

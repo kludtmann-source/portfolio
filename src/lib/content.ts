@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import yaml from 'js-yaml';
 import type { IntentDef } from './intents';
+import type { Envelope, NoiseLimits } from './pose';
 
 export type Localized = string | { de?: string; en?: string };
 
@@ -51,3 +52,15 @@ const intentsFile = path.resolve(process.cwd(), 'content/intents.yaml');
 const intentsData = yaml.load(fs.readFileSync(intentsFile, 'utf8')) as { intents: IntentDef[] };
 
 export const intents: IntentDef[] = intentsData.intents;
+
+// SPEC §6.3: Pose-Hüllen pro Archetyp (Single Source, build-zeitlich geladen).
+export interface PoseEnvelopes {
+  clips: string[];
+  noise: NoiseLimits;
+  envelopes: Record<string, Envelope>;
+}
+
+const envelopesFile = path.resolve(process.cwd(), 'content/pose-envelopes.yaml');
+export const poseEnvelopes = yaml.load(
+  fs.readFileSync(envelopesFile, 'utf8'),
+) as PoseEnvelopes;

@@ -2,6 +2,7 @@
 // Transparenz-Sicht §8 (SPEC §8, ADR-004, P2). Zeigt Build-Info, Live-Status,
 // Provenienz und Links. Kein Spec-Volltext (ADR-004).
 import Base from '../layouts/Base.astro';
+import Figure from '../components/Figure.astro';
 import { profile } from '../lib/content';
 import { resolveLang, t } from '../lib/i18n';
 import fs from 'node:fs';
@@ -72,9 +73,7 @@ const l = {
 
 <Base lang={lang} title={title} intent="learn">
   <div class="stage">
-    <figure class="figure" aria-hidden="true">
-      <!-- Platzhalter, damit das Layout identisch zu anderen Sichten bleibt -->
-    </figure>
+    <figure class="figure" aria-hidden="true"><Figure /></figure>
 
     <nav class="links">
       <a class="link" href={base}>{l.back}</a>
@@ -118,6 +117,8 @@ const l = {
           <dt>archetype</dt><dd id="ls-archetype">—</dd>
           <dt>tier</dt><dd id="ls-tier">—</dd>
           <dt>seed</dt><dd id="ls-seed">—</dd>
+          <dt>clip</dt><dd id="ls-clip">—</dd>
+          <dt>pose-time</dt><dd id="ls-pose-time">—</dd>
           <dt>webgl</dt><dd id="ls-webgl">—</dd>
         </dl>
       </section>
@@ -141,18 +142,28 @@ const l = {
   </div>
 
   <script is:inline>
-    // Live-Status aus data-* am <html> (SPEC §8.3).
+    // Live-Status aus data-* am <html> (SPEC §8.3). Beobachtet auch die asynchron
+    // von der Figur-Insel gesetzten Werte (clip/pose-time/webgl).
     (function () {
       var r = document.documentElement;
+      function set(id, val) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = val || '—';
+      }
       function fill() {
-        document.getElementById('ls-archetype').textContent = r.dataset.archetype || '—';
-        document.getElementById('ls-tier').textContent = r.dataset.tier || '—';
-        document.getElementById('ls-seed').textContent = r.dataset.seed || '—';
-        document.getElementById('ls-webgl').textContent = r.dataset.webgl || '—';
+        set('ls-archetype', r.dataset.archetype);
+        set('ls-tier', r.dataset.tier);
+        set('ls-seed', r.dataset.seed);
+        set('ls-clip', r.dataset.clip);
+        set('ls-pose-time', r.dataset.poseTime);
+        set('ls-webgl', r.dataset.webgl);
       }
-      if (r.dataset.settled) { fill(); } else {
-        document.addEventListener('DOMContentLoaded', fill);
-      }
+      fill();
+      if (!r.dataset.settled) document.addEventListener('DOMContentLoaded', fill);
+      new MutationObserver(fill).observe(r, {
+        attributes: true,
+        attributeFilter: ['data-archetype', 'data-tier', 'data-seed', 'data-clip', 'data-pose-time', 'data-webgl'],
+      });
     })();
   </script>
 </Base>

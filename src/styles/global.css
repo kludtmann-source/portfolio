@@ -126,20 +126,37 @@
     align-items: center;
     justify-content: center;
   }
+  /* Host ist fürs Layout transparent (display:contents) — die bestehenden,
+     überlauf-erprobten Größen gelten unverändert für Platzhalter-/Fallback-SVG
+     wie für das WebGL-Canvas (SPEC §6.4). */
+  .figure-shape-host {
+    display: contents;
+  }
   .figure-shape {
     display: block;
     width: 100%;
     max-width: 11rem;
     height: auto;
     fill: var(--figure-line);
+    color: var(--figure-line);
+  }
+  .figure-canvas {
+    display: block;
+    width: 100%;
+    max-width: 11rem;
+    height: auto;
+    aspect-ratio: 100 / 220;
   }
   html[data-archetype='split'] .figure-shape,
-  html[data-archetype='wide'] .figure-shape {
+  html[data-archetype='wide'] .figure-shape,
+  html[data-archetype='split'] .figure-canvas,
+  html[data-archetype='wide'] .figure-canvas {
     width: auto;
     height: min(66dvh, 38rem);
     max-width: 100%;
   }
-  html[data-archetype='tall'] .figure-shape {
+  html[data-archetype='tall'] .figure-shape,
+  html[data-archetype='tall'] .figure-canvas {
     width: auto;
     height: min(26dvh, 16rem);
   }
@@ -155,7 +172,8 @@
     opacity: 0.3;
     pointer-events: none;
   }
-  html[data-archetype='portrait'] .figure-shape {
+  html[data-archetype='portrait'] .figure-shape,
+  html[data-archetype='portrait'] .figure-canvas {
     width: auto;
     height: 88dvh;
     max-width: 100%;
@@ -239,7 +257,8 @@
 }
 
 @layer degrade {
-  html[data-figure-crop='true'] .figure-shape {
+  html[data-figure-crop='true'] .figure-shape,
+  html[data-figure-crop='true'] .figure-canvas {
     height: 6rem;
   }
 }

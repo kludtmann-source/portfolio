@@ -44,7 +44,7 @@ for (const cell of MATRIX) {
     expect(state.tier, 'Stufe').toBe(cell.tier);
     // SPEC §5: data-* sind Pflicht-Testschnittstelle.
     expect(state.seed, 'Seed aus ?pose=1').toBe('1');
-    expect(state.webgl, 'WebGL in P0 aus').toBe('false');
+    // data-webgl verwaltet ab P3 die Figur-Insel (SPEC §6) — hier nicht geprüft.
     // SPEC §10: kein Overflow an <html>.
     expect(state.scrollHeight, 'kein vertikaler Overflow').toBeLessThanOrEqual(state.clientHeight);
     expect(state.scrollWidth, 'kein horizontaler Overflow').toBeLessThanOrEqual(state.clientWidth);

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://knut-ludtmann.de/schema/pose-envelopes.schema.json",
+  "title": "Pose-Hüllen",
+  "description": "Schema für content/pose-envelopes.yaml (SPEC §6.3).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["clips", "noise", "envelopes"],
+  "$defs": {
+    "unitBox": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "w", "h"],
+      "properties": {
+        "x": { "type": "number", "minimum": 0, "maximum": 1 },
+        "y": { "type": "number", "minimum": 0, "maximum": 1 },
+        "w": { "type": "number", "minimum": 0, "maximum": 1 },
+        "h": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "envelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["box", "anchor", "clips", "timeWindow", "taboos"],
+      "properties": {
+        "box": { "$ref": "#/$defs/unitBox" },
+        "anchor": { "type": "string", "enum": ["feet-center", "center", "head"] },
+        "clips": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+        "timeWindow": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": { "type": "number", "minimum": 0, "maximum": 1 }
+        },
+        "taboos": { "type": "array", "items": { "$ref": "#/$defs/unitBox" } }
+      }
+    }
+  },
+  "properties": {
+    "clips": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "noise": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["headTiltDeg", "handTwistDeg", "weightShift"],
+      "properties": {
+        "headTiltDeg": { "type": "number", "minimum": 0 },
+        "handTwistDeg": { "type": "number", "minimum": 0 },
+        "weightShift": { "type": "number", "minimum": 0 }
+      }
+    },
+    "envelopes": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/$defs/envelope" }
+    }
+  }
+}

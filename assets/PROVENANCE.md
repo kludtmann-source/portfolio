@@ -12,9 +12,22 @@ Platzhalterform (Inline-SVG, `src/components/Figure.astro`, eigenes Werk).
 | ----------------------- | ------------ | -------------------------- | ------- |
 | Platzhalter-Figur (SVG) | Eigenes Werk | proprietär (siehe LICENSE) | ja      |
 
-## Geplant (P3)
+## Stand P3 (Figur-Pipeline, ADR-005)
 
-- Dezimierter, geriggter Ganzkörperscan des Autors (GLB) — eigenes Werk.
-- Gebackene Standbilder (SVG/PNG) — eigenes Werk.
+Die Figur-Assets sind ein **prozeduraler Platzhalter** (eigenes Werk), erzeugt im
+`prebuild` und ausgeliefert aus `public/figure/` (nicht committet, `.gitignore`d).
+Weiterhin **keine** Dritt-Assets im Repo. `extras.placeholder = true` im GLB.
+
+| Asset                               | Herkunft                                         | Lizenz                     | Im Repo         |
+| ----------------------------------- | ------------------------------------------------ | -------------------------- | --------------- |
+| Platzhalter-GLB `figure.glb`        | Eigenes Werk (`scripts/make-placeholder-figure`) | proprietär (siehe LICENSE) | nein (prebuild) |
+| Gebackene Standbilder `poses/*.svg` | Eigenes Werk (`scripts/bake-poses`)              | proprietär (siehe LICENSE) | nein (prebuild) |
+| three.js (Runtime-Rendering)        | mrdoob/three.js                                  | MIT                        | via npm         |
+
+## Geplant (echter Scan)
+
+- Dezimierter, geriggter Ganzkörperscan des Autors (GLB) — eigenes Werk; ersetzt
+  `public/figure/figure.glb` ohne Codeänderung (ADR-005).
+- Gebackene Standbilder (SVG/PNG) — eigenes Werk (Blender Freestyle möglich).
 - Pose-Clips: Quaternius Universal Animation Library (CC0) oder retargetete
   Mixamo-Clips. Roh-/Fremddateien werden nicht committet (SPEC §6.1).
