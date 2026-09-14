@@ -1,0 +1,64 @@
+---
+// Freitext→Intent-Mapping (SPEC §2, §9). Stichwortregeln zur Build-Zeit eingebettet.
+// Kein LLM, kein Backend. No-JS: Form-Submit geht zu base (sichtbar durch CSS .no-js-hidden).
+import { intents } from '../lib/content';
+import { t, type Lang } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+  base: string;
+}
+
+const { lang, base } = Astro.props;
+
+// Nur klickbare Intents; Keywords zur Build-Zeit serialisiert.
+const rules = intents
+  .filter((i) => i.clickable)
+  .map((i) => ({
+    id: i.id,
+    kws: Array.isArray(i.keywords)
+      ? (i.keywords as string[])
+      : ((i.keywords as { de: string[]; en: string[] })[lang] ?? []),
+  }));
+
+const placeholder = lang === 'de' ? 'z. B. „Ich suche einen Entwickler"' : 'e.g. "I\'m hiring"';
+const label =
+  lang === 'de' ? 'Oder beschreibe, was dich interessiert:' : 'Or describe what you\'re looking for:';
+const btnLabel = lang === 'de' ? 'Los' : 'Go';
+---
+
+<form class="intent-search" action={base} method="get" aria-label={label}>
+  <label class="intent-search-label" for="intent-freetext">{label}</label>
+  <div class="intent-search-row">
+    <input
+      id="intent-freetext"
+      name="_q"
+      type="search"
+      autocomplete="off"
+      spellcheck="false"
+      placeholder={placeholder}
+    />
+    <button type="submit">{btnLabel}</button>
+  </div>
+</form>
+
+<script define:vars={{ rules, base }}>
+  var form = document.querySelector('.intent-search');
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var input = form.querySelector('input');
+      var text = (input ? input.value : '').toLowerCase().trim();
+      if (!text) return;
+      for (var i = 0; i < rules.length; i++) {
+        var rule = rules[i];
+        for (var j = 0; j < rule.kws.length; j++) {
+          if (text.indexOf(rule.kws[j].toLowerCase()) !== -1) {
+            window.location.href = base + rule.id + '/';
+            return;
+          }
+        }
+      }
+    });
+  }
+</script>

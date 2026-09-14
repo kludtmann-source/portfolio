@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://knut-ludtmann.de/schema/intents.schema.json",
+  "title": "Intents",
+  "description": "Schema für content/intents.yaml (SPEC §2).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["intents"],
+  "$defs": {
+    "localizedText": {
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "de": { "type": "string" },
+            "en": { "type": "string" }
+          }
+        }
+      ]
+    },
+    "keywordSet": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "de": { "type": "array", "items": { "type": "string" } },
+            "en": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    }
+  },
+  "properties": {
+    "intents": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "label", "clickable", "fields", "keywords"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "label": { "$ref": "#/$defs/localizedText" },
+          "clickable": { "type": "boolean" },
+          "fields": { "type": "array", "items": { "type": "string" } },
+          "keywords": { "$ref": "#/$defs/keywordSet" }
+        }
+      }
+    }
+  }
+}

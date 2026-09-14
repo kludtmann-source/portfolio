@@ -1,0 +1,176 @@
+---
+// Intent-spezifische Sicht auf profile.yaml (SPEC §2, §3, P2, ADR-004).
+// Zeigt T0 immer; T1/T2-Abschnitte je Intent (hire/collab/curious).
+import Figure from './Figure.astro';
+import { profile } from '../lib/content';
+import { t, type Lang } from '../lib/i18n';
+
+interface Props {
+  intent: 'hire' | 'collab' | 'curious';
+  lang: Lang;
+}
+
+const { intent, lang } = Astro.props;
+const p = profile.person;
+const name = p.name;
+const role = t(p.role, lang);
+const tagline = t(p.tagline, lang);
+const location = p.location;
+const primaryLinks = p.links.primary
+  .map((key) => ({ key, url: p.links.all[key] }))
+  .filter((l) => Boolean(l.url));
+const [emailUser, emailDomain] = profile.contact.email.split('@');
+const base = import.meta.env.BASE_URL;
+const otherLang = lang === 'de' ? 'en' : 'de';
+
+const labels = {
+  de: {
+    primary: 'Primärlinks', skills: 'Kompetenzen', projects: 'Projekte',
+    email: 'E-Mail', back: '← Übersicht', repo: 'Repo',
+  },
+  en: {
+    primary: 'Primary links', skills: 'Skills', projects: 'Projects',
+    email: 'Email', back: '← Overview', repo: 'Repo',
+  },
+}[lang];
+---
+
+<div class="stage">
+  <figure class="figure" aria-hidden="true"><Figure /></figure>
+
+  <nav class="links" aria-label={labels.primary}>
+    {
+      primaryLinks.map((l, i) => (
+        <a class:list={['link', { 'link-secondary': i > 0 }]} href={l.url} rel="me">
+          {l.key}
+        </a>
+      ))
+    }
+  </nav>
+
+  <main class="content">
+    <h1 class="name">{name}</h1>
+    <p class="role">{role}</p>
+    {tagline && <p class="tagline essence-extra">{tagline}</p>}
+    <p class="location essence-extra">{location}</p>
+
+    {/* hire: Kompetenzen + Projekte (mit Repo) + Kontakt */}
+    {
+      intent === 'hire' && (
+        <>
+          <ul class="skills t1" aria-label={labels.skills}>
+            {profile.skills.map((s) => <li>{t(s.label, lang)}</li>)}
+          </ul>
+          <ul class="projects t1" aria-label={labels.projects}>
+            {profile.projects.map((pr) => {
+              const one = t(pr.oneliner, lang);
+              return (
+                <li>
+                  <span class="project-title">{pr.title}</span>
+                  {one && <span class="project-one">{one}</span>}
+                  {pr.repo && (
+                    <a class="project-repo" href={pr.repo} rel="external noreferrer">
+                      {labels.repo}
+                    </a>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+          <p class="contact t1">
+            <a
+              class="email"
+              href="#"
+              data-u={emailUser}
+              data-d={emailDomain}
+              aria-label={labels.email}
+            >
+              <span class="email-text">
+                {emailUser}<span aria-hidden="true"> [at] </span>{emailDomain}
+              </span>
+            </a>
+          </p>
+          <div class="depth t2">
+            {profile.projects
+              .filter((pr) => t(pr.description, lang))
+              .map((pr) => (
+                <p>
+                  <strong>{pr.title}:</strong> {t(pr.description, lang)}
+                </p>
+              ))}
+          </div>
+        </>
+      )
+    }
+
+    {/* collab: Projekte (mit Beschreibung) + Kontakt */}
+    {
+      intent === 'collab' && (
+        <>
+          <ul class="projects t1" aria-label={labels.projects}>
+            {profile.projects.map((pr) => {
+              const one = t(pr.oneliner, lang);
+              return (
+                <li>
+                  <span class="project-title">{pr.title}</span>
+                  {one && <span class="project-one">{one}</span>}
+                </li>
+              );
+            })}
+          </ul>
+          <p class="contact t1">
+            <a
+              class="email"
+              href="#"
+              data-u={emailUser}
+              data-d={emailDomain}
+              aria-label={labels.email}
+            >
+              <span class="email-text">
+                {emailUser}<span aria-hidden="true"> [at] </span>{emailDomain}
+              </span>
+            </a>
+          </p>
+          <div class="depth t2">
+            {profile.projects
+              .filter((pr) => t(pr.description, lang))
+              .map((pr) => (
+                <p>
+                  <strong>{pr.title}:</strong> {t(pr.description, lang)}
+                </p>
+              ))}
+          </div>
+        </>
+      )
+    }
+
+    {/* curious: Kompetenzen + Kontakt */}
+    {
+      intent === 'curious' && (
+        <>
+          <ul class="skills t1" aria-label={labels.skills}>
+            {profile.skills.map((s) => <li>{t(s.label, lang)}</li>)}
+          </ul>
+          <p class="contact t1">
+            <a
+              class="email"
+              href="#"
+              data-u={emailUser}
+              data-d={emailDomain}
+              aria-label={labels.email}
+            >
+              <span class="email-text">
+                {emailUser}<span aria-hidden="true"> [at] </span>{emailDomain}
+              </span>
+            </a>
+          </p>
+        </>
+      )
+    }
+  </main>
+
+  <a class="intent-back" href={base} aria-label={labels.back}>{labels.back}</a>
+  <a class="lang-toggle" href={`?lang=${otherLang}`} hreflang={otherLang} rel="alternate">
+    {otherLang.toUpperCase()}
+  </a>
+</div>

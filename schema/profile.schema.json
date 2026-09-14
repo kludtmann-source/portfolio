@@ -82,6 +82,8 @@
     },
     "timeline": { "type": "array" },
     "talks": { "type": "array" },
+    "principles": { "type": "array" },
+    "personal": { "type": "array" },
     "contact": {
       "type": "object",
       "additionalProperties": false,

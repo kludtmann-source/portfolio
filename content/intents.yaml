@@ -1,0 +1,100 @@
+# Intent-Definitionen (SPEC §2 + ADR-004). Daten, nicht Code.
+# labels: lokalisiert {de, en}. clickable: false = rein für Maschinen, kein UI-Element.
+# fields: Schlüssel aus profile.yaml, die in dieser Sicht erscheinen.
+# keywords: clientseitige Stichwortregeln für Freitext→Intent-Mapping (kein LLM, SPEC §2).
+
+intents:
+  - id: hire
+    label: { de: "Ich suche jemanden", en: "I'm looking for someone" }
+    clickable: true
+    fields: [skills, timeline, contact, projects]
+    keywords:
+      de:
+        [
+          suche,
+          stelle,
+          job,
+          arbeit,
+          hire,
+          recruiting,
+          mitarbeiter,
+          kandidat,
+          anstellung,
+          bewerber,
+        ]
+      en:
+        [
+          looking,
+          hire,
+          job,
+          work,
+          position,
+          recruit,
+          candidate,
+          staff,
+          employment,
+        ]
+  - id: collab
+    label:
+      {
+        de: "Ich will etwas zusammen bauen",
+        en: "I want to build something together",
+      }
+    clickable: true
+    fields: [projects, principles, contact]
+    keywords:
+      de:
+        [
+          zusammen,
+          bauen,
+          kooperieren,
+          projekt,
+          kollaboration,
+          partner,
+          freelance,
+          auftrag,
+          zusammenarbeiten,
+        ]
+      en: [together, build, collaborate, project, partner, freelance, cooperate]
+  - id: curious
+    label: { de: "Nur gucken", en: "Just browsing" }
+    clickable: true
+    fields: [skills, personal]
+    keywords:
+      de:
+        [
+          neugierig,
+          schauen,
+          gucken,
+          wer,
+          was,
+          steckbrief,
+          kennenlernen,
+          persoenlich,
+        ]
+      en: [curious, browse, look, who, what, interested, personal, about]
+  - id: learn
+    label: { de: "Wie ist das hier gebaut?", en: "How is this built?" }
+    clickable: true
+    fields: []
+    keywords:
+      de:
+        [
+          wie,
+          gebaut,
+          technik,
+          stack,
+          code,
+          entwicklung,
+          astro,
+          spec,
+          transparenz,
+        ]
+      en: [how, built, tech, stack, code, development, astro, spec, transparent]
+  - id: agent
+    label: { de: "Für Maschinen", en: "For machines" }
+    clickable: false
+    fields: []
+    keywords:
+      de: []
+      en: []

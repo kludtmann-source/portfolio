@@ -35,6 +35,8 @@ projects: # T1 (Einzeiler) + T2 (Beschreibung)
 
 timeline: [] # T2, optional
 talks: [] # T2, optional
+principles: [] # T2, Arbeitsweise (für collab-Sicht, P2)
+personal: [] # T2, Persönliches (für curious-Sicht, P2; nur freigegeben)
 
 contact:
   email: "mail@knut-ludtmann.de" # obfuskiert im HTML, Klartext in llms.txt (P1)

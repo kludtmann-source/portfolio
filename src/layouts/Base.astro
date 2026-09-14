@@ -11,13 +11,14 @@ interface Props {
   lang: Lang;
   title: string;
   description?: string;
+  intent?: string; // SPEC §2, P2: data-intent für Testschnittstelle (§10)
 }
 
-const { lang, title, description = '' } = Astro.props;
+const { lang, title, description = '', intent } = Astro.props;
 ---
 
 <!doctype html>
-<html lang={lang} data-archetype="portrait" data-tier="1" data-webgl="false">
+<html lang={lang} data-archetype="portrait" data-tier="1" data-webgl="false" data-intent={intent}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -29,5 +30,16 @@ const { lang, title, description = '' } = Astro.props;
   </head>
   <body>
     <slot />
+    <script is:inline>
+      // E-Mail-Aufwertung: obfuskierte Teile → echtes mailto (Progressive Enhancement).
+      (function () {
+        document.querySelectorAll('a.email[data-u][data-d]').forEach(function (a) {
+          var addr = a.getAttribute('data-u') + '@' + a.getAttribute('data-d');
+          a.setAttribute('href', 'mailto:' + addr);
+          var text = a.querySelector('.email-text');
+          if (text) text.textContent = addr;
+        });
+      })();
+    </script>
   </body>
 </html>

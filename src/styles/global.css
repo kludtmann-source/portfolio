@@ -1,7 +1,7 @@
 /* Layout & Typografie (SPEC §5, §7). Cascade Layers, Container Queries, dvh/dvw.
    Sichtbarkeit der Stufen liegt in der letzten Ebene `visibility`, damit sie
    Display-Regeln aus `typo` sicher überschreibt. */
-@layer reset, base, layout, typo, figure, degrade, visibility;
+@layer reset, base, layout, typo, figure, degrade, intents, doc, visibility;
 
 @layer reset {
   *,
@@ -70,9 +70,9 @@
   html[data-archetype='portrait'] .content {
     order: 1;
   }
-  html[data-archetype='micro'] .links,
-  html[data-archetype='tall'] .links,
-  html[data-archetype='portrait'] .links {
+  html[data-archetype='micro'] .stage > .links,
+  html[data-archetype='tall'] .stage > .links,
+  html[data-archetype='portrait'] .stage > .links {
     order: 2;
   }
   html[data-archetype='micro'] .figure,
@@ -244,6 +244,176 @@
   }
 }
 
+@layer intents {
+  /* Startsicht: 2 Spalten (Figur | Inhalt), Primärlinks inline in .content (SPEC §10 Tab-Order). */
+  html[data-intent='start'][data-archetype='split'] .stage,
+  html[data-intent='start'][data-archetype='wide'] .stage {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 2fr);
+  }
+  .links-inline {
+    margin-top: clamp(0.1rem, 0.8vmin, 0.5rem);
+  }
+  /* split/wide: Intent-Auswahl + Links horizontal — spart Höhe (phone-landscape 844×390). */
+  html[data-intent='start'][data-archetype='split'] .intent-nav,
+  html[data-intent='start'][data-archetype='wide'] .intent-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  html[data-intent='start'][data-archetype='split'] .links-inline,
+  html[data-intent='start'][data-archetype='wide'] .links-inline {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  /* Intent-Auswahl (Startsicht) — SPEC §2, P2. */
+  .intent-nav {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.25rem, 1.2vmin, 0.7rem);
+  }
+  .intent-link {
+    display: block;
+    padding: clamp(0.3rem, 1vmin, 0.55rem) clamp(0.5rem, 2vmin, 1rem);
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    font-size: calc(clamp(0.78rem, 3cqi, 1.05rem) * var(--typo-step, 1));
+    transition: background 0.12s;
+  }
+  .intent-link:hover,
+  .intent-link:focus-visible {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  /* Freitext (IntentSearch) */
+  .intent-search {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-top: clamp(0.3rem, 1.2vmin, 0.7rem);
+  }
+  .intent-search-label {
+    font-size: calc(clamp(0.7rem, 2.5cqi, 0.9rem) * var(--typo-step, 1));
+    opacity: 0.75;
+  }
+  .intent-search-row {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .intent-search input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid currentColor;
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: calc(clamp(0.78rem, 3cqi, 1rem) * var(--typo-step, 1));
+  }
+  .intent-search button {
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--accent);
+    font: inherit;
+    cursor: pointer;
+  }
+  .intent-search button:hover,
+  .intent-search button:focus-visible {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  /* intent-back-Link auf Intent-Seiten */
+  .intent-back {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0.6rem;
+    font-size: 0.7rem;
+    opacity: 0.6;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    padding: 0.1rem 0.5rem;
+    z-index: 3;
+  }
+
+  /* project-repo-Link */
+  .project-repo {
+    font-size: 0.85em;
+    opacity: 0.75;
+    border-bottom: 1px dotted currentColor;
+    margin-left: 0.25rem;
+  }
+
+  /* learn-Sicht */
+  .learn-content {
+    overflow: hidden;
+  }
+  .learn-h1 {
+    font-size: calc(clamp(1rem, 8cqi, 2.8rem) * var(--typo-step, 1));
+  }
+  .learn-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .learn-sh {
+    margin: 0;
+    font-size: calc(clamp(0.72rem, 2.8cqi, 0.95rem) * var(--typo-step, 1));
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    opacity: 0.65;
+  }
+  .learn-dl {
+    margin: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.1rem 0.8rem;
+    font-size: calc(clamp(0.7rem, 2.5cqi, 0.9rem) * var(--typo-step, 1));
+    font-family: ui-monospace, 'Cascadia Code', monospace;
+  }
+  .learn-dl dt { opacity: 0.65; }
+  .learn-dl dd { margin: 0; }
+}
+
+@layer doc {
+  /* Scrollendes Layout für Recht-Seiten (SPEC §14, P2). Kein No-Scroll-Anspruch. */
+  .doc-body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    padding: clamp(1rem, 5vw, 3rem);
+    max-width: 72ch;
+    margin: 0 auto;
+  }
+  .doc-back {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    opacity: 0.7;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    padding: 0.15rem 0.6rem;
+  }
+  .doc-back:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+  .doc-content h1 { font-size: 1.6rem; margin: 0 0 1rem; }
+  .doc-content h2 { font-size: 1.1rem; margin: 1.5rem 0 0.4rem; }
+  .doc-content p, .doc-content address { line-height: 1.6; margin: 0 0 0.8rem; }
+  .doc-content address { font-style: normal; }
+  .doc-todo {
+    padding: 0.5rem 1rem;
+    border-left: 3px solid var(--accent);
+    opacity: 0.7;
+    font-style: italic;
+  }
+}
+
 @layer visibility {
   /* Stufen-Sichtbarkeit (SPEC §5). Default versteckt; per data-tier eingeblendet. */
   .t1,
@@ -264,9 +434,17 @@
     display: flex;
   }
 
+  /* learn-Sicht: Sektionen degradieren mit dem Tier (SPEC §8, §5). */
+  html[data-tier='1'] .learn-section.t1,
+  html[data-tier='2'] .learn-section.t1 {
+    display: flex;
+  }
+
   /* micro: reduzierte Essenz — Name, Rolle, 1 Link (SPEC §5). */
   html[data-archetype='micro'] .essence-extra,
-  html[data-archetype='micro'] .link-secondary {
+  html[data-archetype='micro'] .link-secondary,
+  html[data-archetype='micro'] .intent-nav,
+  html[data-archetype='micro'] .intent-search {
     display: none;
   }
 }

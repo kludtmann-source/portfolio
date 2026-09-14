@@ -1,0 +1,25 @@
+---
+// Intent-Routen hire/collab/curious (SPEC §2, ADR-004).
+// getStaticPaths erzeugt je eine statische Route; learn ist in learn.astro separiert.
+import Base from '../layouts/Base.astro';
+import ProfileView from '../components/ProfileView.astro';
+import { profile, intents } from '../lib/content';
+import { resolveLang, t } from '../lib/i18n';
+
+export function getStaticPaths() {
+  return (['hire', 'collab', 'curious'] as const).map((id) => ({ params: { intent: id } }));
+}
+
+const { intent } = Astro.params as { intent: 'hire' | 'collab' | 'curious' };
+const lang = resolveLang(Astro.url.searchParams.get('lang'));
+
+const intentDef = intents.find((i) => i.id === intent);
+const intentLabel = intentDef ? t(intentDef.label, lang) : '';
+
+const p = profile.person;
+const title = `${p.name} — ${t(p.role, lang)} · ${intentLabel}`;
+---
+
+<Base lang={lang} title={title} intent={intent}>
+  <ProfileView intent={intent} lang={lang} />
+</Base>

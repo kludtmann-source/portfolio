@@ -1,0 +1,31 @@
+---
+// Scrollendes Layout für Recht-Seiten (SPEC §14, P2). Kein No-Scroll-Anspruch.
+// Bettet AgentHead nicht ein (kein JSON-LD für Recht-Seiten).
+import '../styles/tokens.css';
+import '../styles/global.css';
+import type { Lang } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+  title: string;
+}
+
+const { lang, title } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <link rel="icon" href="data:," />
+  </head>
+  <body class="doc-body">
+    <a href={base} class="doc-back">← Zurück / Back</a>
+    <main class="doc-content">
+      <slot />
+    </main>
+  </body>
+</html>

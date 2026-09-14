@@ -1,0 +1,158 @@
+---
+// Transparenz-Sicht §8 (SPEC §8, ADR-004, P2). Zeigt Build-Info, Live-Status,
+// Provenienz und Links. Kein Spec-Volltext (ADR-004).
+import Base from '../layouts/Base.astro';
+import { profile } from '../lib/content';
+import { resolveLang, t } from '../lib/i18n';
+import fs from 'node:fs';
+import path from 'node:path';
+import { execSync } from 'node:child_process';
+import process from 'node:process';
+
+const lang = resolveLang(Astro.url.searchParams.get('lang'));
+const otherLang = lang === 'de' ? 'en' : 'de';
+const base = import.meta.env.BASE_URL;
+
+const p = profile.person;
+const title = `${p.name} — ${lang === 'de' ? 'Wie ist das gebaut?' : 'How is this built?'}`;
+
+// Build-Info (analog build.json.ts, SPEC §4/§8).
+function commitSha(): string {
+  if (process.env.GITHUB_SHA) return process.env.GITHUB_SHA;
+  try { return execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim(); } catch { return 'dev'; }
+}
+function specVersion(): string {
+  try {
+    const spec = fs.readFileSync(path.resolve(process.cwd(), 'SPEC.md'), 'utf8');
+    return spec.match(/Version\s+([\d.]+)/)?.[1] ?? 'unknown';
+  } catch { return 'unknown'; }
+}
+
+const commit = commitSha();
+const builtAt = new Date().toISOString();
+const specVer = specVersion();
+const isDev = commit === 'dev';
+
+// Provenienz aus PROVENANCE.md (SPEC §8.4) — nur Dateiname, nicht der Inhalt inline gerendert.
+const repoBase = 'https://github.com/kludtmann-source/portfolio';
+const specUrl = `${repoBase}/blob/main/SPEC.md`;
+const commitsUrl = `${repoBase}/commits/main`;
+const commitUrl = isDev ? repoBase : `${repoBase}/commit/${commit}`;
+const provenanceUrl = `${repoBase}/blob/main/assets/PROVENANCE.md`;
+
+const l = {
+  de: {
+    h1: 'Wie ist das hier gebaut?',
+    spec: 'Spezifikation (SPEC.md)',
+    buildInfo: 'Build-Info',
+    commit: 'Commit',
+    builtAt: 'Gebaut am',
+    specVersion: 'Spec-Version',
+    liveState: 'Aktueller Zustand',
+    provenance: 'Asset-Provenienz',
+    history: 'Commit-Historie',
+    back: '← Übersicht',
+    dev: 'lokal (dev)',
+  },
+  en: {
+    h1: 'How is this built?',
+    spec: 'Specification (SPEC.md)',
+    buildInfo: 'Build info',
+    commit: 'Commit',
+    builtAt: 'Built at',
+    specVersion: 'Spec version',
+    liveState: 'Current state',
+    provenance: 'Asset provenance',
+    history: 'Commit history',
+    back: '← Overview',
+    dev: 'local (dev)',
+  },
+}[lang];
+---
+
+<Base lang={lang} title={title} intent="learn">
+  <div class="stage">
+    <figure class="figure" aria-hidden="true">
+      <!-- Platzhalter, damit das Layout identisch zu anderen Sichten bleibt -->
+    </figure>
+
+    <nav class="links">
+      <a class="link" href={base}>{l.back}</a>
+    </nav>
+
+    <main class="content learn-content">
+      <h1 class="name learn-h1">{l.h1}</h1>
+
+      <section class="learn-section">
+        <h2 class="learn-sh">{l.spec}</h2>
+        <p>
+          <a href={specUrl} rel="external noreferrer" target="_blank">SPEC.md ↗</a>
+        </p>
+      </section>
+
+      <section class="learn-section t1">
+        <h2 class="learn-sh">{l.buildInfo}</h2>
+        <dl class="learn-dl">
+          <dt>{l.commit}</dt>
+          <dd>
+            {
+              isDev ? (
+                l.dev
+              ) : (
+                <a href={commitUrl} rel="external noreferrer" target="_blank">
+                  {commit.slice(0, 7)}
+                </a>
+              )
+            }
+          </dd>
+          <dt>{l.builtAt}</dt>
+          <dd>{builtAt}</dd>
+          <dt>{l.specVersion}</dt>
+          <dd>{specVer}</dd>
+        </dl>
+      </section>
+
+      <section class="learn-section t1" id="live-state">
+        <h2 class="learn-sh">{l.liveState}</h2>
+        <dl class="learn-dl" id="live-dl">
+          <dt>archetype</dt><dd id="ls-archetype">—</dd>
+          <dt>tier</dt><dd id="ls-tier">—</dd>
+          <dt>seed</dt><dd id="ls-seed">—</dd>
+          <dt>webgl</dt><dd id="ls-webgl">—</dd>
+        </dl>
+      </section>
+
+      <section class="learn-section depth t2">
+        <h2 class="learn-sh">{l.provenance}</h2>
+        <p>
+          <a href={provenanceUrl} rel="external noreferrer" target="_blank">
+            assets/PROVENANCE.md ↗
+          </a>
+        </p>
+        <p>
+          <a href={commitsUrl} rel="external noreferrer" target="_blank">{l.history} ↗</a>
+        </p>
+      </section>
+    </main>
+
+    <a class="lang-toggle" href={`?lang=${otherLang}`} hreflang={otherLang} rel="alternate">
+      {otherLang.toUpperCase()}
+    </a>
+  </div>
+
+  <script is:inline>
+    // Live-Status aus data-* am <html> (SPEC §8.3).
+    (function () {
+      var r = document.documentElement;
+      function fill() {
+        document.getElementById('ls-archetype').textContent = r.dataset.archetype || '—';
+        document.getElementById('ls-tier').textContent = r.dataset.tier || '—';
+        document.getElementById('ls-seed').textContent = r.dataset.seed || '—';
+        document.getElementById('ls-webgl').textContent = r.dataset.webgl || '—';
+      }
+      if (r.dataset.settled) { fill(); } else {
+        document.addEventListener('DOMContentLoaded', fill);
+      }
+    })();
+  </script>
+</Base>

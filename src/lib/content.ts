@@ -1,8 +1,9 @@
-// Lädt und normalisiert content/profile.yaml (SPEC §3, Single Source).
+// Lädt und normalisiert content/profile.yaml und intents.yaml (SPEC §3, Single Source).
 // Wird ausschließlich zur Build-Zeit (Astro SSG) ausgeführt.
 import fs from 'node:fs';
 import path from 'node:path';
 import yaml from 'js-yaml';
+import type { IntentDef } from './intents';
 
 export type Localized = string | { de?: string; en?: string };
 
@@ -33,6 +34,8 @@ export interface Profile {
   projects: Project[];
   timeline: unknown[];
   talks: unknown[];
+  principles: unknown[];
+  personal: unknown[];
   contact: { email: string };
 }
 
@@ -43,3 +46,8 @@ const data = yaml.load(fs.readFileSync(file, 'utf8')) as Profile;
 data.person.sameAs = Object.values(data.person.links.all);
 
 export const profile: Profile = data;
+
+const intentsFile = path.resolve(process.cwd(), 'content/intents.yaml');
+const intentsData = yaml.load(fs.readFileSync(intentsFile, 'utf8')) as { intents: IntentDef[] };
+
+export const intents: IntentDef[] = intentsData.intents;

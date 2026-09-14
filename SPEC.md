@@ -2,7 +2,7 @@
 
 Version 0.1 · Stand 12.09.2026 · Autor: Knut Ludtmann (Konzeptgespräch mit Claude)
 
-Diese Datei ist die **Spec**. Sie ist die einzige Quelle für Entscheidungen. Sie liegt im Repo, wird zur Build-Zeit von der Site selbst gerendert („Wie ist das gebaut?") und wird nie kopiert. Änderungen an der Spec sind Commits mit Begründung; Code folgt der Spec, nicht umgekehrt.
+Diese Datei ist die **Spec**. Sie ist die einzige Quelle für Entscheidungen. Sie liegt im Repo und wird auf der Site verlinkt — nicht inline gerendert (ADR-004). Sie wird nie kopiert. Änderungen an der Spec sind Commits mit Begründung; Code folgt der Spec, nicht umgekehrt.
 
 ---
 
@@ -50,7 +50,7 @@ Intent ist die Navigation. Die Startsicht zeigt T0 (siehe 3) und eine Intent-Aus
 
 - Die Liste ist Daten (`content/intents.yaml`), nicht Code. Labels und Reihenfolge werden vom Autor gepflegt.
 - Freitext-Feld optional: Eingabe wird **clientseitig und deterministisch** (Stichwort-Regeln in `content/intents.yaml`) auf eine Intent-ID gemappt. Kein LLM-Aufruf in V1 (kein Backend, keine Keys).
-- Intent ist Teil der URL (`/?i=hire`), damit teilbar und testbar.
+- Jeder Intent hat eine eigene Route (`/hire`, `/collab`, `/curious`, `/learn`), damit teilbar, bookmarkbar und testbar (ADR-004). `?lang=` bleibt kombinierbar (`/hire?lang=en`).
 
 ---
 
@@ -185,11 +185,11 @@ Regeln:
 
 ---
 
-## 8. Transparenz-Sicht „Wie ist das gebaut?“ (`?i=learn`)
+## 8. Transparenz-Sicht „Wie ist das gebaut?" (`/learn`)
 
-Zeigt, aus dem Repo gerendert, nie kopiert:
+Zeigt:
 
-1. Diese Spec (Markdown, aktueller Stand des Builds), mit Link auf die Datei im Repo.
+1. Link auf SPEC.md im GitHub-Repo (nicht inline gerendert, ADR-004).
 2. Build-Info: Commit-SHA (verlinkt), Zeitstempel, Spec-Version.
 3. Aktueller Zustand: Archetyp, Stufe, Seed, Clip/Zeitpunkt der Figur, WebGL ja/nein — live aus `data-*`.
 4. Asset-Provenienz aus `assets/PROVENANCE.md`.
@@ -274,7 +274,7 @@ Das Repo ist öffentlich. Es enthält nichts aus dem Arbeitgeberkontext des Auto
 2. **Phasen, jede mit lauffähigem Ergebnis:**
    - **P0 Walking Skeleton:** Repo, Astro, `profile.yaml` mit Schema, T0-Rendering, Archetyp-Erkennung mit `data-*`, Nie-Scroll-Messlauf, Playwright-Matrix ohne Overflow. Figur = einfarbige Platzhalterform. Deploy auf `<user>.github.io`.
    - **P1 Agenten-Ausgaben:** JSON-LD, `llms.txt`, `index.md`, `profile.json`, `robots.txt`, `sitemap.xml`, `build.json`, Validierung im CI.
-   - **P2 Intent-Sichten:** `intents.yaml`, URL-Parameter, Sichten für T1/T2, Freitext-Mapping, Transparenz-Sicht (8).
+   - **P2 Intent-Sichten:** `intents.yaml`, separate Routen je Intent (ADR-004), Sichten für T1/T2, Freitext-Mapping, Transparenz-Sicht (8), Recht-Routen.
    - **P3 Figur:** Fallback-Pipeline mit gebackenem Set und Seed, dann WebGL-Insel, Hüllen, Übersetzung bei Archetypwechsel. Zuerst mit Y-Bot-Platzhalter, Austausch gegen Scan ohne Codeänderung.
    - **P4 Feinschliff:** Typo-Kalibrierung, Tokens, Dark/Light, Lighthouse, DNS-Doku.
 3. **Commits referenzieren Spec-Abschnitte** (`feat(figure): seed-based pose selection — SPEC §6.3`). Abweichungen von der Spec sind ein ADR in `docs/decisions/` plus Spec-Änderung im selben Commit.

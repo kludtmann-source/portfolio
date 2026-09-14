@@ -1,9 +1,10 @@
 ---
-// Startsicht (SPEC §3, §5). Rendert T0 immer, T1/T2 nach Stufe (per CSS/data-tier).
-// Intent-Auswahl und Sichten kommen in P2.
+// Startsicht (SPEC §2, §3, §5). Zeigt T0 + Intent-Auswahl (SPEC §2, ADR-004).
+// T1/T2-Inhalte liegen auf den Intent-Routen /hire /collab /curious /learn.
 import Base from '../layouts/Base.astro';
 import Figure from '../components/Figure.astro';
-import { profile } from '../lib/content';
+import IntentSearch from '../components/IntentSearch.astro';
+import { profile, intents } from '../lib/content';
 import { resolveLang, t } from '../lib/i18n';
 
 const lang = resolveLang(Astro.url.searchParams.get('lang'));
@@ -19,29 +20,20 @@ const primaryLinks = p.links.primary
   .map((key) => ({ key, url: p.links.all[key] }))
   .filter((l) => Boolean(l.url));
 
-// SPEC §7/§14: E-Mail obfuskiert im HTML; per Insel zu mailto aufgewertet.
-const [emailUser, emailDomain] = profile.contact.email.split('@');
+const clickableIntents = intents.filter((i) => i.clickable);
 
 const title = `${name} — ${role}`;
+const base = import.meta.env.BASE_URL;
+
 const labels = {
-  de: { primary: 'Primärlinks', skills: 'Kompetenzen', projects: 'Projekte', email: 'E-Mail' },
-  en: { primary: 'Primary links', skills: 'Skills', projects: 'Projects', email: 'Email' },
+  de: { primary: 'Primärlinks', intents: 'Was bringt dich her?' },
+  en: { primary: 'Primary links', intents: 'What brings you here?' },
 }[lang];
 ---
 
-<Base lang={lang} title={title} description={role}>
+<Base lang={lang} title={title} description={role} intent="start">
   <div class="stage">
     <figure class="figure" aria-hidden="true"><Figure /></figure>
-
-    <nav class="links" aria-label={labels.primary}>
-      {
-        primaryLinks.map((l, i) => (
-          <a class:list={['link', { 'link-secondary': i > 0 }]} href={l.url} rel="me">
-            {l.key}
-          </a>
-        ))
-      }
-    </nav>
 
     <main class="content">
       <h1 class="name">{name}</h1>
@@ -49,57 +41,36 @@ const labels = {
       {tagline && <p class="tagline essence-extra">{tagline}</p>}
       <p class="location essence-extra">{location}</p>
 
-      <ul class="skills t1" aria-label={labels.skills}>
-        {profile.skills.map((s) => <li>{t(s.label, lang)}</li>)}
-      </ul>
-
-      <ul class="projects t1" aria-label={labels.projects}>
+      {/* Intent-Auswahl: echte Links — No-JS-fähig (SPEC §2, ADR-004). Tab-Order: Auswahl → Links → Freitext (§10). */}
+      <nav class="intent-nav" aria-label={labels.intents}>
         {
-          profile.projects.map((pr) => {
-            const one = t(pr.oneliner, lang);
+          clickableIntents.map((intent) => {
+            const label = t(intent.label, lang);
             return (
-              <li>
-                <span class="project-title">{pr.title}</span>
-                {one && <span class="project-one">{one}</span>}
-              </li>
+              <a class="intent-link" href={`${base}${intent.id}/`}>
+                {label}
+              </a>
             );
           })
         }
-      </ul>
+      </nav>
 
-      <p class="contact t1">
-        <a class="email" href="#" data-u={emailUser} data-d={emailDomain} aria-label={labels.email}>
-          <span class="email-text">{emailUser}<span aria-hidden="true"> [at] </span>{emailDomain}</span>
-        </a>
-      </p>
-
-      <div class="depth t2">
+      <nav class="links links-inline" aria-label={labels.primary}>
         {
-          profile.projects
-            .filter((pr) => t(pr.description, lang))
-            .map((pr) => (
-              <p>
-                <strong>{pr.title}:</strong> {t(pr.description, lang)}
-              </p>
-            ))
+          primaryLinks.map((l, i) => (
+            <a class:list={['link', { 'link-secondary': i > 0 }]} href={l.url} rel="me">
+              {l.key}
+            </a>
+          ))
         }
-      </div>
+      </nav>
+
+      <IntentSearch lang={lang} base={base} />
     </main>
 
     <a class="lang-toggle" href={`?lang=${otherLang}`} hreflang={otherLang} rel="alternate">
       {otherLang.toUpperCase()}
     </a>
   </div>
-
-  <script is:inline>
-    // E-Mail-Aufwertung: obfuskierte Teile → echtes mailto (Progressive Enhancement).
-    (function () {
-      var a = document.querySelector('a.email[data-u][data-d]');
-      if (!a) return;
-      var addr = a.getAttribute('data-u') + '@' + a.getAttribute('data-d');
-      a.setAttribute('href', 'mailto:' + addr);
-      var text = a.querySelector('.email-text');
-      if (text) text.textContent = addr;
-    })();
-  </script>
 </Base>
+
