@@ -126,37 +126,34 @@
     align-items: center;
     justify-content: center;
   }
-  /* Host ist fürs Layout transparent (display:contents) — die bestehenden,
-     überlauf-erprobten Größen gelten unverändert für Platzhalter-/Fallback-SVG
-     wie für das WebGL-Canvas (SPEC §6.4). */
+  /* Host ist die größenbestimmende Box mit fester aspect-ratio; SVG und Canvas
+     füllen sie (100%). overflow:hidden kappt transiente Kind-Größen (etwa das
+     Canvas-Default 300×150 vor dem ersten Render), damit der Nie-Scroll-Messlauf
+     nicht fälschlich degradiert (SPEC §5, §6.4). */
   .figure-shape-host {
-    display: contents;
-  }
-  .figure-shape {
     display: block;
     width: 100%;
     max-width: 11rem;
-    height: auto;
-    fill: var(--figure-line);
+    aspect-ratio: 100 / 220;
+    overflow: hidden;
     color: var(--figure-line);
   }
+  .figure-shape,
   .figure-canvas {
     display: block;
     width: 100%;
-    max-width: 11rem;
-    height: auto;
-    aspect-ratio: 100 / 220;
+    height: 100%;
   }
-  html[data-archetype='split'] .figure-shape,
-  html[data-archetype='wide'] .figure-shape,
-  html[data-archetype='split'] .figure-canvas,
-  html[data-archetype='wide'] .figure-canvas {
+  .figure-shape {
+    fill: var(--figure-line);
+  }
+  html[data-archetype='split'] .figure-shape-host,
+  html[data-archetype='wide'] .figure-shape-host {
     width: auto;
     height: min(66dvh, 38rem);
     max-width: 100%;
   }
-  html[data-archetype='tall'] .figure-shape,
-  html[data-archetype='tall'] .figure-canvas {
+  html[data-archetype='tall'] .figure-shape-host {
     width: auto;
     height: min(26dvh, 16rem);
   }
@@ -172,8 +169,7 @@
     opacity: 0.3;
     pointer-events: none;
   }
-  html[data-archetype='portrait'] .figure-shape,
-  html[data-archetype='portrait'] .figure-canvas {
+  html[data-archetype='portrait'] .figure-shape-host {
     width: auto;
     height: 88dvh;
     max-width: 100%;
@@ -257,8 +253,7 @@
 }
 
 @layer degrade {
-  html[data-figure-crop='true'] .figure-shape,
-  html[data-figure-crop='true'] .figure-canvas {
+  html[data-figure-crop='true'] .figure-shape-host {
     height: 6rem;
   }
 }
