@@ -280,7 +280,7 @@ Das Repo ist öffentlich. Es enthält nichts aus dem Arbeitgeberkontext des Auto
    - **P1 Agenten-Ausgaben:** JSON-LD, `llms.txt`, `index.md`, `profile.json`, `robots.txt`, `sitemap.xml`, `build.json`, Validierung im CI.
    - **P2 Intent-Sichten:** `intents.yaml`, separate Routen je Intent (ADR-004), Sichten für T1/T2, Freitext-Mapping, Transparenz-Sicht (8), Recht-Routen.
    - **P3 Figur:** Fallback-Pipeline mit gebackenem Set und Seed, dann WebGL-Insel, Hüllen, Übersetzung bei Archetypwechsel. Zuerst mit prozeduralem Platzhalter (ADR-005), Austausch gegen Scan ohne Codeänderung.
-   - **P4 Feinschliff:** Typo-Kalibrierung, Tokens, Dark/Light, Lighthouse, DNS-Doku.
+   - **P4 Feinschliff (2026-09-15):** Lokale Webfonts (Space Grotesk + Inter, OFL-lizenziert), Accessibility-Tests (axe-core), Custom-Domain-Switch auf `knut-ludtmann.de` (base entfernt, CNAME + DNS-Doku), Lighthouse-Job im CI, Tokens + Typo-Verbesserungen. Watch-Viewport optional (Autor selbst).
 3. **Commits referenzieren Spec-Abschnitte** (`feat(figure): seed-based pose selection — SPEC §6.3`). Abweichungen von der Spec sind ein ADR in `docs/decisions/` plus Spec-Änderung im selben Commit.
 4. **Keine Abhängigkeiten ohne Grund.** Jede neue Dependency wird im Commit begründet. Budget in 6.4 und 10 ist bindend.
 5. **Tests vor Features.** Ein Archetyp gilt als fertig, wenn seine Matrixzeilen im CI grün sind.
@@ -301,4 +301,4 @@ Das Repo ist öffentlich. Es enthält nichts aus dem Arbeitgeberkontext des Auto
 - [x] split→+T2-Schwelle: `w ≥ 1400` statt `w ≥ 1100` (Abweichung, siehe ADR-001).
 - [x] Lizenz: All rights reserved (proprietär).
 - [x] Recht: eigene Routen `/impressum` + `/datenschutz` → P2.
-- [x] Domain `knut-ludtmann.de` aktiv erst P4; bis dahin `kludtmann-source.github.io/portfolio/`. In P4 entfällt der `base`-Pfad (Custom Domain zeigt auf Root, siehe ADR-002).
+- [x] Domain `knut-ludtmann.de` aktiv seit P4 (2026-09-15); `base`-Pfad entfällt, Custom Domain zeigt auf Root (siehe ADR-002).

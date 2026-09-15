@@ -1,6 +1,6 @@
-# ADR-002: Projekt-Site `portfolio` mit `base: '/portfolio/'`
+# ADR-002: Projekt-Site `portfolio` — base-Pfad bis P4
 
-Status: akzeptiert · Datum: 2026-09-13 · Phase: P0
+Status: implementiert · Datum: 2026-09-13; P4-Update 2026-09-15 · Phase: P0–P4
 
 ## Kontext
 
@@ -31,10 +31,12 @@ brechen die absoluten Asset-Pfade (gebündeltes CSS/JS), die Astro erzeugt.
 
 ## Konsequenzen
 
-- Lokale Vorschau und CI-Deploy laufen unter dem Unterpfad `/portfolio/`.
-- **P4 (Custom Domain):** Sobald `knut-ludtmann.de` auf das Repo zeigt, liegt die
-  Site im Root der Domain. Dann entfällt `base` (bzw. `base: '/'`) und `site`
-  wird `https://knut-ludtmann.de`. Dieser Wechsel gehört in den P4-Commit inkl.
-  `CNAME`-Datei (SPEC §9).
-- Interne Links (llms.txt, index.md, Intent-URLs ab P1/P2) müssen den `base`-Pfad
-  über `import.meta.env.BASE_URL` auflösen, nicht hartkodiert `/…` schreiben.
+- **P0–P3:** Lokale Vorschau und CI-Deploy liefen unter dem Unterpfad `/portfolio/`.
+- **P4 (2026-09-15) — Custom Domain live:** `knut-ludtmann.de` zeigt jetzt auf das Repo-Root.
+  - `base` entfernt (wird `'/'`, default).
+  - `site` → `https://knut-ludtmann.de` in astro.config.mjs.
+  - `public/CNAME` hinzugefügt mit `knut-ludtmann.de` (GitHub Pages auto-sync).
+  - DNS-Doku in `docs/DNS-IONOS.md` für Autor (A-Records + CNAME-Records bei IONOS).
+  - Alle Test- und CI-Konfigurationen aktualisiert: playwright.config.ts, lighthouserc.json, tests/agents.spec.ts.
+  - Interne Links nutzen `import.meta.env.BASE_URL` → funktionieren automatisch bei base-Wechsel.
+  - Lokaler Preview startet jetzt unter `http://localhost:4321/` (nicht `/portfolio/`).
