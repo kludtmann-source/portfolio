@@ -2,6 +2,10 @@
 :root {
   color-scheme: light dark;
 
+  /* Schriften (SPEC §7): lokale Webfonts + Fallback-Stack, siehe src/styles/fonts.css. */
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-text: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
   --bg: #faf9f7;
   --text: #17181c;
   --accent: #3b4cc0;

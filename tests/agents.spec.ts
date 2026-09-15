@@ -74,8 +74,8 @@ test('sitemap.xml ist XML mit canonical loc (SPEC §4)', async ({ request }) => 
   const text = await res.text();
   expect(text).toContain('<urlset');
   expect(text).toContain('<loc>');
-  // Kanonische URL aus astro.config (site + base), nicht der Preview-Host.
-  expect(text).toContain('kludtmann-source.github.io/portfolio');
+  // Kanonische URL aus astro.config (site-root, kein /portfolio-Subpfad mehr).
+  expect(text).toContain('https://knut-ludtmann.de/');
 });
 
 test('build.json hat commit, builtAt, specVersion, provenance (SPEC §4)', async ({ request }) => {

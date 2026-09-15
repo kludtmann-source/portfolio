@@ -39,6 +39,24 @@ jobs:
         with:
           path: dist
 
+  # SPEC §10: Lighthouse mobil (Perf ≥ 90, LCP ≤ 2,5 s). Warn-Assertions als Signal,
+  # blockiert das Deploy nicht (deploy hängt nur an build). Läuft als CI-Action, damit
+  # keine schwere lokale Dependency (SPEC §13.4) nötig ist; Config in lighthouserc.json.
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Lighthouse (SPEC §10)
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          configPath: ./lighthouserc.json
+
   deploy:
     needs: build
     runs-on: ubuntu-latest

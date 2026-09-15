@@ -14,6 +14,9 @@ playwright-report/
 blob-report/
 playwright/.cache/
 
+# Lighthouse CI (SPEC §10)
+.lighthouseci/
+
 # OS / editor
 .DS_Store
 *.log

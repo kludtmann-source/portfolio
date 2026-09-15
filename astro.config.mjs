@@ -2,12 +2,10 @@
 import { defineConfig } from 'astro/config';
 
 // SPEC §9: statischer Build für GitHub Pages, kein Server, kein UI-Framework-Runtime.
-// SPEC §14 / ADR-002: Projekt-Site im Repo `portfolio` → Deploy unter
-// kludtmann-source.github.io/portfolio/, deshalb `base: '/portfolio/'`.
-// P4: Bei Custom Domain knut-ludtmann.de zeigt die Domain auf Root, dann entfällt `base`.
+// P4: Custom Domain knut-ludtmann.de zeigt auf den Root der Domain. Deshalb
+// entfällt der Repo-Unterpfad (`base`) und das Site-URL-Root ist die Domain.
 export default defineConfig({
-  site: 'https://kludtmann-source.github.io',
-  base: '/portfolio/',
+  site: 'https://knut-ludtmann.de',
   trailingSlash: 'ignore',
   build: { format: 'directory' },
 });

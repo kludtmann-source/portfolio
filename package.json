@@ -21,6 +21,7 @@
     "three": "^0.180.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.0",
     "@playwright/test": "^1.48.0",
     "@types/js-yaml": "^4.0.9",
     "@types/three": "^0.180.0",

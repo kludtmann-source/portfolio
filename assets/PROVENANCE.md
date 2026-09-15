@@ -24,6 +24,18 @@ Weiterhin **keine** Dritt-Assets im Repo. `extras.placeholder = true` im GLB.
 | Gebackene Standbilder `poses/*.svg` | Eigenes Werk (`scripts/bake-poses`)              | proprietär (siehe LICENSE) | nein (prebuild) |
 | three.js (Runtime-Rendering)        | mrdoob/three.js                                  | MIT                        | via npm         |
 
+## Stand P4 (Typografie, SPEC §7)
+
+Zwei lokale Webfonts, self-hosted als subgesetzte `.woff2` (Latin), **kein**
+externer Request. Erste committete Dritt-Assets; OFL erlaubt Einbettung und
+Weitergabe, die Lizenztexte liegen bei den Dateien.
+
+| Asset                             | Herkunft                                         | Lizenz      | Im Repo |
+| --------------------------------- | ------------------------------------------------ | ----------- | ------- |
+| Space Grotesk (Display, 500/700)  | Florian Karsten Project Authors (via Fontsource) | SIL OFL 1.1 | ja      |
+| Inter (Text, 400/600)             | The Inter Project Authors (via Fontsource)       | SIL OFL 1.1 | ja      |
+| OFL-Lizenztexte `src/fonts/OFL-*` | floriankarsten/space-grotesk, rsms/inter         | SIL OFL 1.1 | ja      |
+
 ## Geplant (echter Scan)
 
 - Dezimierter, geriggter Ganzkörperscan des Autors (GLB) — eigenes Werk; ersetzt
